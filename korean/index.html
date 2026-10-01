@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>เกาหลีก้าวแรก</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#EEF2EA">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="เกาหลีก้าวแรก">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<style>@font-face{font-family:"IBM Plex Sans Thai";src:url("fonts/IBMPlexSansThai-Regular.ttf") format("truetype");font-weight:400;font-display:swap}@font-face{font-family:"IBM Plex Sans Thai";src:url("fonts/IBMPlexSansThai-SemiBold.ttf") format("truetype");font-weight:600;font-display:swap}@font-face{font-family:"IBM Plex Sans Thai";src:url("fonts/IBMPlexSansThai-Bold.ttf") format("truetype");font-weight:700;font-display:swap}</style>
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#EEF1F5;--surface:#FFFFFF;--sunk:#DEE3EA;--ink:#1B2433;--muted:#5A6577;--line:#D3D9E2;
+  --grid:#BF3B30;--accent:#2B5C9E;--gold:#C98A12;
+  --plain:#2B5C9E;--asp:#C0392B;--tense:#8E5B0C;--other:#4A5868;--vb:#1D7A6A;--vc:#7A4FA0;
+  --ok:#1D7A6A;--ok-soft:#DDF0EB;--bad:#C0392B;--bad-soft:#F8E1DE;
+}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--bg:#121722;--surface:#1A2130;--sunk:#262F40;--ink:#E6EAF1;--muted:#98A3B5;--line:#2C3547;--grid:#E0705F;--accent:#85A9E6;--gold:#E8B44A;--plain:#85A9E6;--asp:#EE8473;--tense:#D9A24E;--other:#A3B0C2;--vb:#5CC2AE;--vc:#B897DB;--ok:#5CC2AE;--ok-soft:#1C3933;--bad:#EE8473;--bad-soft:#40241F}
+}
+:root[data-theme="dark"]{--bg:#121722;--surface:#1A2130;--sunk:#262F40;--ink:#E6EAF1;--muted:#98A3B5;--line:#2C3547;--grid:#E0705F;--accent:#85A9E6;--gold:#E8B44A;--plain:#85A9E6;--asp:#EE8473;--tense:#D9A24E;--other:#A3B0C2;--vb:#5CC2AE;--vc:#B897DB;--ok:#5CC2AE;--ok-soft:#1C3933;--bad:#EE8473;--bad-soft:#40241F}
+*,*::before,*::after{box-sizing:border-box}
+*{margin:0}
+body{height:100%;display:flex;flex-direction:column;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans Thai","IBM Plex Sans KR",Tahoma,"Leelawadee UI",sans-serif;line-height:1.55;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit}
+.ko{font-family:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif}
+.wrap{width:100%;max-width:520px;margin:0 auto}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* 상단 */
+header.top{padding:14px 20px 10px}
+.title-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+h1{font-size:1.15rem;font-weight:700}
+.stats{display:flex;align-items:center;gap:12px;font-size:.84rem;color:var(--muted)}
+.count{font-weight:600;color:var(--ink)}
+.icon{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--line);background:var(--surface);display:grid;place-items:center;cursor:pointer}
+.bar{display:flex;gap:4px;margin-top:12px}
+.bar[hidden]{display:none}
+.seg{display:block;height:6px;border-radius:3px;background:var(--sunk);overflow:hidden}
+.seg i{display:block;height:100%;border-radius:3px;transition:width .35s ease}
+main{flex:1;min-height:0;overflow-y:auto;padding:4px 20px 96px}
+
+/* 공통 컨트롤 */
+.filters{display:flex;gap:8px;margin:4px 0 10px;overflow-x:auto;scrollbar-width:none;padding:2px}
+.filters::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1.5px solid var(--line);background:transparent;padding:6px 14px;border-radius:999px;font-size:.86rem;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip:disabled{opacity:.4;cursor:not-allowed}
+.chip.ko{font-size:1.05rem;padding:4px 12px;min-width:42px}
+.switch{display:inline-flex;padding:3px;border-radius:12px;background:var(--sunk);margin:4px 0 12px}
+.switch button{border:0;background:transparent;padding:7px 14px;border-radius:9px;font-size:.86rem;font-weight:600;color:var(--muted);cursor:pointer}
+.switch button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.toggles{display:flex;gap:18px;margin:2px 0 14px;flex-wrap:wrap}
+.tog{position:relative;background:none;border:0;padding:4px 0 4px 40px;font-size:.84rem;color:var(--muted);cursor:pointer}
+.tog::before{content:"";position:absolute;left:0;top:50%;width:32px;height:18px;margin-top:-9px;border-radius:9px;background:var(--line);transition:background .2s}
+.tog::after{content:"";position:absolute;left:2px;top:50%;width:14px;height:14px;margin-top:-7px;border-radius:50%;background:var(--surface);transition:transform .2s}
+.tog[aria-pressed="true"]{color:var(--ink)}
+.tog[aria-pressed="true"]::before{background:var(--ink)}
+.tog[aria-pressed="true"]::after{transform:translateX(14px)}
+.search{position:relative;margin:4px 0 10px}
+.search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--muted);pointer-events:none}
+.search input{width:100%;padding:11px 14px 11px 40px;border-radius:14px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:16px}
+.search input::placeholder{color:var(--muted)}
+.mini{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;border:1.5px solid var(--line);background:transparent;font-size:.84rem;font-weight:600;cursor:pointer}
+.mini svg{width:18px;height:18px}
+.ibtn{flex:none;width:40px;height:40px;border-radius:50%;border:0;background:transparent;display:grid;place-items:center;color:var(--muted);cursor:pointer}
+.ibtn svg{width:20px;height:20px}
+.star[aria-pressed="true"]{color:var(--gold)}
+.star[aria-pressed="true"] svg path{fill:currentColor}
+.none{padding:28px 8px;text-align:center;color:var(--muted);font-size:.92rem}
+.sub{font-size:.84rem;color:var(--muted);margin-bottom:10px}
+
+/* 원고지 칸: 한글 쓰기 연습장처럼 가운데 십자 안내선 */
+.wg{position:relative;width:min(58vw,230px);aspect-ratio:1/1;border:2px solid var(--grid);border-radius:6px;display:grid;place-items:center;background:var(--surface)}
+.wg::before{content:"";position:absolute;left:50%;top:7%;bottom:7%;width:0;border-left:1.5px dashed var(--grid);opacity:.35}
+.wg::after{content:"";position:absolute;top:50%;left:7%;right:7%;height:0;border-top:1.5px dashed var(--grid);opacity:.35}
+.wg .jamo{position:relative;z-index:1;font-family:"IBM Plex Sans KR",sans-serif;font-weight:600;font-size:min(8.5rem,38vw);line-height:1}
+.wg.sm{width:min(40vw,150px)}
+.wg.sm .jamo{font-size:min(5.6rem,25vw)}
+
+/* 카드 */
+.flip{position:relative;height:clamp(350px,58vh,460px);perspective:1400px;touch-action:pan-y;user-select:none;-webkit-user-select:none;cursor:pointer;transition:transform .25s ease,opacity .25s ease}
+.flip.enter{animation:enter .26s ease-out}
+@keyframes enter{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
+.inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.3,.7,.2,1)}
+.inner.on{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;-webkit-backface-visibility:hidden;backface-visibility:hidden;background:var(--surface);border:1.5px solid var(--line);border-radius:28px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px;overflow:hidden}
+.back{transform:rotateY(180deg);justify-content:flex-start;padding-top:52px;overflow-y:auto}
+.tag{position:absolute;top:18px;left:18px;z-index:2;font-size:.76rem;font-weight:600;padding:3px 10px;border-radius:999px;color:var(--surface)}
+.pos{position:absolute;top:19px;right:20px;font-size:.82rem;color:var(--muted)}
+.ok-t{color:var(--ok);font-weight:600}
+.hint{position:absolute;bottom:16px;left:0;right:0;text-align:center;font-size:.84rem;color:var(--muted)}
+.pair{display:flex;align-items:center;gap:14px}
+.g2{font-size:3rem;font-weight:600;line-height:1.15}
+.emo{font-size:2.5rem;line-height:1.2}
+.name{font-size:1.2rem;font-weight:700;margin-top:2px;text-align:center}
+.name small{font-size:.92rem;font-weight:600;color:var(--accent)}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;max-width:320px;margin-top:10px}
+.facts div{display:flex;flex-direction:column;justify-content:center;background:var(--bg);border-radius:14px;padding:7px 10px;text-align:center}
+.facts span{font-size:.74rem;color:var(--muted)}
+.facts b{font-size:1.02rem}
+.ex{width:100%;max-width:320px;margin-top:8px;padding:8px 12px;border-radius:14px;border:1.5px dashed var(--line);text-align:center}
+.ex .ko{font-size:1.3rem;font-weight:600}
+.ex .rd{color:var(--accent);font-weight:600;font-size:.9rem}
+.ex .mn{font-size:.86rem}
+.ex .en{color:var(--muted);font-size:.78rem}
+.tip{margin-top:8px;font-size:.8rem;color:var(--muted);text-align:center;max-width:320px}
+.stamp{position:absolute;top:20px;z-index:5;padding:5px 12px;border:2px solid;border-radius:10px;background:var(--surface);font-weight:700;font-size:.9rem;opacity:0;pointer-events:none}
+.stamp.again{left:16px;color:var(--bad);transform:rotate(-7deg)}
+.stamp.ok{right:16px;color:var(--ok);transform:rotate(7deg)}
+.row{display:flex;gap:10px;margin-top:14px}
+.btn{flex:1;padding:14px 10px;border-radius:16px;border:1.5px solid var(--line);background:var(--surface);font-weight:600;font-size:1rem;cursor:pointer}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn.sq{flex:0 0 56px;display:grid;place-items:center;padding:0}
+.btn.danger{color:var(--bad);border-color:var(--bad)}
+.btn.wide{width:100%;flex:none;margin-top:20px}
+.hint2{text-align:center;color:var(--muted);font-size:.8rem;margin-top:12px}
+.hint2.keys{display:none}
+@media (hover:hover) and (pointer:fine){.hint2.touch{display:none}.hint2.keys{display:block}}
+.empty{text-align:center;padding:48px 0 24px}
+.empty-g{font-size:4rem;font-weight:700;line-height:1.3;color:var(--vb)}
+.empty p{margin:6px 0 20px;color:var(--muted)}
+
+/* 그룹 색 */
+.c-plain{background:var(--plain)}.c-asp{background:var(--asp)}.c-tense{background:var(--tense)}.c-other{background:var(--other)}.c-vb{background:var(--vb)}.c-vc{background:var(--vc)}
+.t-plain{color:var(--plain)}.t-asp{color:var(--asp)}.t-tense{color:var(--tense)}.t-other{color:var(--other)}.t-vb{color:var(--vb)}.t-vc{color:var(--vc)}
+
+/* 목록 */
+.legend{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;font-size:.8rem;margin:0 0 12px}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:1px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:8px}
+.cell{position:relative;background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:8px 4px 9px;text-align:center;cursor:pointer;min-width:0}
+.cell .g{display:block;font-size:1.9rem;font-weight:600;line-height:1.3}
+.cell .k{display:block;font-size:.72rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cell.known{border-color:var(--ok)}
+.cell.known::after{content:"✓";position:absolute;top:3px;right:8px;font-size:.72rem;font-weight:700;color:var(--ok)}
+
+/* 음절 만들기 */
+.build{display:flex;flex-direction:column;align-items:center;background:var(--surface);border:1.5px solid var(--line);border-radius:28px;padding:22px 18px 18px}
+.build .rd{margin-top:10px;font-size:1.5rem;font-weight:700;color:var(--accent)}
+.formula{margin-top:2px;font-size:1rem;color:var(--muted)}
+.bnote{margin-top:8px;font-size:.84rem;text-align:center;color:var(--muted)}
+.blabel{font-size:.82rem;font-weight:600;color:var(--muted);margin:14px 0 4px}
+
+/* 단어 */
+.wlist{display:flex;flex-direction:column;gap:8px;text-align:left}
+.wd{display:flex;align-items:center;gap:2px;background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:4px 4px 4px 0}
+.wd-main{flex:1;min-width:0;display:flex;align-items:center;gap:14px;background:none;border:0;padding:8px 6px 8px 14px;text-align:left;cursor:pointer}
+.wd-ko{flex:0 1 auto;max-width:48%;min-width:56px;font-size:1.45rem;font-weight:600;line-height:1.3;overflow-wrap:anywhere}
+.wd-txt{display:flex;flex-direction:column;min-width:0}
+.wd-txt b{font-size:.98rem;line-height:1.35}
+.wd-rd{color:var(--accent);font-size:.88rem;font-weight:600}
+.wd-en{color:var(--muted);font-size:.78rem}
+
+/* 회화 */
+.xp{background:var(--surface);border:1.5px solid var(--line);border-radius:22px;padding:14px 8px 12px 16px;margin-bottom:10px}
+.xp-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.xp-th{font-size:1rem;font-weight:700;padding-top:6px}
+.xp-ko{font-size:1.4rem;font-weight:600;line-height:1.45;margin-top:2px;padding-right:8px}
+.xp-rd{color:var(--accent);font-weight:600;padding-right:8px}
+.xp-en{color:var(--muted);font-size:.84rem;padding-right:8px}
+.xp-act{display:flex;gap:8px;margin-top:10px}
+
+/* 퀴즈 */
+.qhead{display:flex;justify-content:space-between;align-items:center;font-size:.86rem;color:var(--muted);margin:0 0 10px}
+.dots{display:flex;gap:5px}
+.dots i{width:8px;height:8px;border-radius:50%;background:var(--line)}
+.dots i.d-ok{background:var(--ok)}
+.dots i.d-ng{background:var(--bad)}
+.dots i.d-now{outline:2px solid var(--ink);outline-offset:1px}
+.qcard{position:relative;min-height:clamp(220px,34vh,300px);background:var(--surface);border:1.5px solid var(--line);border-radius:28px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;overflow:hidden}
+.qcard .meta{color:var(--muted);margin-top:10px;text-align:center}
+.qcard .mini{margin-top:10px}
+.qword{font-size:clamp(2.2rem,10vw,3.4rem);font-weight:600;line-height:1.35;text-align:center}
+.listen{width:88px;height:88px;border-radius:50%;border:0;background:var(--ink);color:var(--bg);display:grid;place-items:center;cursor:pointer}
+.listen svg{width:36px;height:36px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.opt{min-height:60px;padding:10px 8px;border-radius:16px;border:1.5px solid var(--line);background:var(--surface);font-size:1.05rem;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
+.o-main{font-size:1.05rem;font-weight:600;line-height:1.3}
+.o-g{font-size:2.2rem;font-weight:600;line-height:1.2}
+.o-sub{font-size:.76rem;font-weight:400;color:var(--muted);line-height:1.3}
+.opt.right{border-color:var(--ok);background:var(--ok-soft)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.opt:disabled{cursor:default}
+.ans{margin-top:10px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:1px}
+.ans b{font-size:1.1rem}
+.a-rd{color:var(--accent);font-weight:600;font-size:.92rem}
+.a-en{color:var(--muted);font-size:.84rem}
+.fb{margin-top:14px;text-align:center;font-weight:600}
+.fb.ok{color:var(--ok)}
+.fb.ng{color:var(--bad)}
+.result{text-align:center;padding:16px 0}
+.big{font-size:4.5rem;font-weight:700;line-height:1.1}
+.big small{font-size:1.5rem;color:var(--muted);font-weight:600}
+.msg{margin:8px 0 20px}
+
+/* 하단 탭, 알림, 크게 보기, 도움말 */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:10;display:flex;justify-content:center;background:var(--surface);border-top:1.5px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav.tabs button{flex:1;max-width:120px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 0 10px;background:none;border:0;color:var(--muted);font-size:.7rem;font-weight:600;cursor:pointer}
+nav.tabs svg{width:22px;height:22px}
+nav.tabs button[aria-current="page"]{color:var(--ink)}
+.toast{position:fixed;left:50%;bottom:calc(78px + env(safe-area-inset-bottom,0px));z-index:50;max-width:calc(100% - 40px);transform:translate(-50%,8px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:.86rem;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.bigv{position:fixed;inset:0;z-index:40;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--surface);padding:calc(24px + env(safe-area-inset-top,0px)) 24px calc(24px + env(safe-area-inset-bottom,0px));text-align:center;animation:fade .2s ease-out}
+.bigv[hidden]{display:none}
+.bigv .close{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:16px;width:44px;height:44px}
+.bv-hint{font-size:.9rem;color:var(--muted);margin-bottom:18px}
+.bv-ko{font-size:clamp(2.2rem,10vw,4.2rem);line-height:1.4;font-weight:700;max-width:900px;word-break:keep-all}
+.bv-rd{font-size:1.25rem;color:var(--accent);font-weight:600;margin-top:14px}
+.bv-th{font-size:1.05rem;margin-top:6px}
+.bv-en{font-size:.92rem;color:var(--muted)}
+.bigv .btn{flex:none;margin-top:28px;padding:14px 26px;display:inline-flex;align-items:center;gap:8px}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.sheet-bg{position:fixed;inset:0;z-index:30;display:flex;align-items:flex-end;justify-content:center;background:rgba(10,14,22,.45)}
+.sheet-bg[hidden]{display:none}
+.sheet{width:100%;max-width:520px;max-height:85%;overflow-y:auto;background:var(--surface);border-radius:24px 24px 0 0;padding:22px 22px calc(22px + env(safe-area-inset-bottom,0px));animation:up .25s ease-out}
+@keyframes up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+.sheet h2{font-size:1.15rem;margin-bottom:6px}
+.sheet h3{font-size:.95rem;margin:16px 0 4px}
+.sheet p{font-size:.9rem;color:var(--muted)}
+.sheet .voice{margin-top:8px;padding:10px 12px;border-radius:12px;background:var(--bg);color:var(--ink)}
+.three{width:100%;border-collapse:collapse;margin-top:8px;font-size:.88rem;text-align:center}
+.three th,.three td{border:1px solid var(--line);padding:6px 4px}
+.three th{background:var(--bg);font-weight:600}
+.three .ko{font-size:1.1rem;font-weight:600}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<script>
+// 진단: 스크립트 오류가 나면 빈 화면 대신 오류 내용을 표시 (원인 확인 후 제거 예정)
+window.addEventListener("error",function(e){try{var v=document.getElementById("view");if(v&&!v.children.length){v.innerHTML='<pre style="white-space:pre-wrap;font:12px/1.5 monospace;color:#B4432F;padding:12px">오류: '+(e.message||e)+'\n줄 '+e.lineno+':'+e.colno+'\n'+navigator.userAgent+'</pre>';}}catch(x){}});
+window.addEventListener("load",function(){setTimeout(function(){var v=document.getElementById("view");if(v&&!v.children.length){v.innerHTML='<pre style="white-space:pre-wrap;font:12px/1.5 monospace;color:#B4432F;padding:12px">화면이 그려지지 않았습니다 (스크립트 미실행)\n'+navigator.userAgent+'</pre>';}},1500);});
+</script>
+
+<header class="top wrap">
+  <div class="title-row">
+    <h1>เกาหลีก้าวแรก</h1>
+    <div class="stats">
+      <span id="streak"></span>
+      <span id="count" class="count"></span>
+      <button class="icon" id="infoBtn" aria-label="วิธีใช้และการตั้งค่า"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 7.6v.1"/></svg></button>
+    </div>
+  </div>
+  <div class="bar" id="bar" aria-hidden="true"></div>
+</header>
+<main id="main"><div class="wrap" id="view"></div></main>
+<nav class="tabs" aria-label="เปลี่ยนหน้า">
+  <button data-tab="letters" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="6" width="12" height="15" rx="2.5"/><path d="M8 3h9.5A2.5 2.5 0 0 1 20 5.5V17"/></svg><span>ตัวอักษร</span></button>
+  <button data-tab="build"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M12 4v16M4 12h16" stroke-dasharray="2 2"/></svg><span>ประกอบคำ</span></button>
+  <button data-tab="words"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/></svg><span>คำศัพท์</span></button>
+  <button data-tab="phr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M5 5h14a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-8l-5 4v-4H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/></svg><span>บทสนทนา</span></button>
+  <button data-tab="quiz"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 5-5.5"/></svg><span>แบบทดสอบ</span></button>
+</nav>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="bigv" id="bigv" hidden role="dialog" aria-modal="true" aria-label="ขยายใหญ่">
+  <button class="icon close" id="bvClose" aria-label="ปิด"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  <p class="bv-hint">ยื่นหน้าจอนี้ให้คนเกาหลีดู<br><span class="ko">제가 하고 싶은 말이에요</span></p>
+  <p class="bv-ko ko" lang="ko" id="bvKo"></p>
+  <p class="bv-rd" id="bvRd"></p>
+  <p class="bv-th" id="bvTh"></p>
+  <p class="bv-en" lang="en" id="bvEn"></p>
+  <button class="btn primary" id="bvSay"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5H4z"/><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18.2 6.3a8 8 0 0 1 0 11.4"/></svg><span>ฟังเสียง</span></button>
+</div>
+<div class="sheet-bg" id="sheet" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetT">
+    <h2 id="sheetT">วิธีใช้</h2>
+    <h3>เสียงพยัญชนะ 3 แบบ</h3>
+    <p>ภาษาเกาหลีแบ่ง ㄱ ㄷ ㅂ ㅈ เป็น 3 แบบ คนไทยแยกได้ง่ายกว่าคนชาติอื่น เพราะภาษาไทยก็มีเสียงที่มีลมและไม่มีลมเหมือนกัน</p>
+    <table class="three">
+      <tr><th>ธรรมดา</th><th>ลมแรง</th><th>เกร็ง</th></tr>
+      <tr><td><span class="ko">ㄱ</span> ค (ลมเบา)</td><td><span class="ko">ㅋ</span> ค</td><td><span class="ko">ㄲ</span> ก</td></tr>
+      <tr><td><span class="ko">ㄷ</span> ท (ลมเบา)</td><td><span class="ko">ㅌ</span> ท</td><td><span class="ko">ㄸ</span> ต</td></tr>
+      <tr><td><span class="ko">ㅂ</span> พ (ลมเบา)</td><td><span class="ko">ㅍ</span> พ</td><td><span class="ko">ㅃ</span> ป</td></tr>
+      <tr><td><span class="ko">ㅈ</span> ช (ลมเบา)</td><td><span class="ko">ㅊ</span> ช</td><td><span class="ko">ㅉ</span> จ</td></tr>
+    </table>
+    <h3>คำอ่านภาษาไทย</h3>
+    <p>คำอ่านเป็นเสียงโดยประมาณ กดปุ่มลำโพงเพื่อฟังเสียงจริง</p>
+    <p class="voice" id="voiceState"></p>
+    <h3>ประวัติการเรียน</h3>
+    <p>ตัวอักษรที่จำได้และผลแบบทดสอบเก็บไว้ในเครื่องนี้เท่านั้น ถ้าล้างประวัติ รายการที่บันทึกไว้จะยังอยู่</p>
+    <div class="row"><button class="btn danger" id="reset">ล้างประวัติการเรียน</button><button class="btn primary" id="closeSheet">ปิด</button></div>
+  </div>
+</div>
+<script>
+(()=>{
+"use strict";
+/* ===== 자음: [자모, 이름, 이름 태국어 읽기, 그룹, 첫소리, 받침 소리, 연습 음절, 예시[단어, 읽기, 뜻, 영어, 그림], 설명] ===== */
+const C_RAW=[
+["ㄱ","기역","คียอก","plain","ค / ก","ก","가",["가방","คาบัง","กระเป๋า","bag","👜"],"ต้นคำคล้าย ค แต่ลมเบากว่า กลางคำคล้าย ก"],
+["ㄴ","니은","นีอึน","other","น","น","나",["나무","นามู","ต้นไม้","tree","🌳"],"เหมือน น ในภาษาไทย"],
+["ㄷ","디귿","ทีกึด","plain","ท / ด","ด","다",["다리","ทารี","ขา, สะพาน","leg, bridge","🌉"],"ต้นคำคล้าย ท แต่ลมเบากว่า กลางคำคล้าย ด"],
+["ㄹ","리을","รีอึล","other","ร / ล","ล","라",["라면","รามยอน","รามยอน (บะหมี่เกาหลี)","ramyeon","🍜"],"ต้นคำและกลางคำคล้าย ร แบบลิ้นแตะเบา ๆ ถ้าเป็นตัวสะกดออกเสียง L ไม่ใช่ น"],
+["ㅁ","미음","มีอึม","other","ม","ม","마",["물","มุล","น้ำ","water","💧"],"เหมือน ม ในภาษาไทย"],
+["ㅂ","비읍","พีอึบ","plain","พ / บ","บ","바",["바다","พาดา","ทะเล","sea","🌊"],"ต้นคำคล้าย พ แต่ลมเบากว่า กลางคำคล้าย บ"],
+["ㅅ","시옷","ชีโอด","plain","ซ","ด","사",["사과","ซากวา","แอปเปิล","apple","🍎"],"คล้าย ซ แต่ถ้าตามด้วย ㅣ จะออกเสียงคล้าย ช เช่น 시 = ชี"],
+["ㅇ","이응","อีอึง","other","อ / ง","ง","아",["우유","อูยู","นม","milk","🥛"],"ต้นพยางค์ไม่มีเสียง เหมือน อ ในภาษาไทย ถ้าเป็นตัวสะกดออกเสียง ง"],
+["ㅈ","지읒","ชีอึด","plain","ช / จ","ด","자",["지도","ชีโด","แผนที่","map","🗺️"],"ต้นคำคล้าย ช แต่ลมเบากว่า กลางคำคล้าย จ"],
+["ㅊ","치읓","ชีอึด","asp","ช","ด","차",["차","ชา","ชา, รถยนต์","tea, car","🍵"],"ลมแรง เหมือน ช ในภาษาไทย รู้ไหม: 차 แปลว่า ชา เหมือนภาษาไทย"],
+["ㅋ","키읔","คีอึก","asp","ค","ก","카",["커피","คอพี","กาแฟ","coffee","☕"],"ลมแรง เหมือน ค ในภาษาไทย"],
+["ㅌ","티읕","ทีอึด","asp","ท","ด","타",["토마토","โทมาโท","มะเขือเทศ","tomato","🍅"],"ลมแรง เหมือน ท ในภาษาไทย"],
+["ㅍ","피읖","พีอึบ","asp","พ","บ","파",["포도","โพโด","องุ่น","grape","🍇"],"ลมแรง เหมือน พ ในภาษาไทย"],
+["ㅎ","히읗","ฮีอึด","other","ฮ","ด","하",["하나","ฮานา","หนึ่ง","one","☝️"],"เหมือน ฮ ในภาษาไทย"],
+["ㄲ","쌍기역","ซังกียอก","tense","ก","ก","까",["꿈","กุม","ความฝัน","dream","💭"],"เสียงเกร็ง ไม่มีลม เหมือน ก ในภาษาไทย"],
+["ㄸ","쌍디귿","ซังดีกึด","tense","ต","—","따",["딸기","ตัลกี","สตรอว์เบอร์รี","strawberry","🍓"],"เสียงเกร็ง ไม่มีลม เหมือน ต ในภาษาไทย"],
+["ㅃ","쌍비읍","ซังบีอึบ","tense","ป","—","빠",["빵","ปัง","ขนมปัง","bread","🍞"],"เสียงเกร็ง ไม่มีลม เหมือน ป รู้ไหม: 빵 มาจากภาษาโปรตุเกส เหมือนคำว่า ปัง ในภาษาไทย"],
+["ㅆ","쌍시옷","ซังชีโอด","tense","ซ (เกร็ง)","ด","싸",["쌀","ซัล","ข้าวสาร","rice (uncooked)","🌾"],"ซ ที่เกร็งและแรงกว่า ㅅ"],
+["ㅉ","쌍지읒","ซังจีอึด","tense","จ","—","짜",["짜다","จาดา","เค็ม","salty","🧂"],"เสียงเกร็ง ไม่มีลม เหมือน จ ในภาษาไทย"]
+];
+/* ===== 모음: [자모, 소리, 그룹, ㅇ과 쓴 꼴, 예시, 설명] ===== */
+const V_RAW=[
+["ㅏ","อา","vb","아",["아기","อากี","ทารก","baby","👶"],"อ้าปากกว้าง เหมือน อา"],
+["ㅑ","ยา","vb","야",["야구","ยากู","เบสบอล","baseball","⚾"],"ㅏ ที่มีเสียง ย นำหน้า"],
+["ㅓ","ออ","vb","어",["어머니","ออมอนี","แม่","mother","👩‍👦"],"คล้าย ออ แต่ไม่ห่อปาก"],
+["ㅕ","ยอ","vb","여",["여자","ยอจา","ผู้หญิง","woman","👩"],"ㅓ ที่มีเสียง ย นำหน้า"],
+["ㅗ","โอ","vb","오",["오이","โออี","แตงกวา","cucumber","🥒"],"ห่อปากกลม เหมือน โอ"],
+["ㅛ","โย","vb","요",["요리","โยรี","การทำอาหาร","cooking","🍳"],"ㅗ ที่มีเสียง ย นำหน้า"],
+["ㅜ","อู","vb","우",["우산","อูซัน","ร่ม","umbrella","☂️"],"ห่อปากยื่นออกมา เหมือน อู"],
+["ㅠ","ยู","vb","유",["유리","ยูรี","กระจก","glass","🪟"],"ㅜ ที่มีเสียง ย นำหน้า"],
+["ㅡ","อือ","vb","으",["크다","คือดา","ใหญ่","big","🐘"],"ฉีกปากเล็กน้อย ไม่ห่อปาก เหมือน อือ"],
+["ㅣ","อี","vb","이",["이름","อีรึม","ชื่อ","name","🏷️"],"เหมือน อี ในภาษาไทย"],
+["ㅐ","แอ","vc","애",["개","แค","สุนัข","dog","🐶"],"ปัจจุบัน ㅐ กับ ㅔ ออกเสียงเกือบเหมือนกัน"],
+["ㅒ","แย","vc","얘",["얘기","แยกี","เรื่องที่คุยกัน","talk, story","💬"],"ㅐ ที่มีเสียง ย นำหน้า"],
+["ㅔ","เอ","vc","에",["게","เค","ปู","crab","🦀"],"ปัจจุบัน ㅔ กับ ㅐ ออกเสียงเกือบเหมือนกัน"],
+["ㅖ","เย","vc","예",["예","เย","ใช่","yes","👍"],"ㅔ ที่มีเสียง ย นำหน้า"],
+["ㅘ","วา","vc","와",["과자","ควาจา","ขนม","snack","🍪"],"ㅗ + ㅏ"],
+["ㅙ","แว","vc","왜",["왜","แว","ทำไม","why","❓"],"ㅗ + ㅐ"],
+["ㅚ","เว","vc","외",["회사","ฮเวซา","บริษัท","company","🏢"],"ㅗ + ㅣ แต่ปัจจุบันออกเสียงคล้าย เว"],
+["ㅝ","วอ","vc","워",["뭐","มวอ","อะไร","what","🤔"],"ㅜ + ㅓ"],
+["ㅞ","เว","vc","웨",["웨이터","เวอีทอ","พนักงานเสิร์ฟ","waiter","🍽️"],"ㅜ + ㅔ"],
+["ㅟ","วี","vc","위",["귀","ควี","หู","ear","👂"],"ㅜ + ㅣ"],
+["ㅢ","อึย","vc","의",["의사","อึยซา","หมอ","doctor","🧑‍⚕️"],"ㅡ + ㅣ บางตำแหน่งออกเสียง อี หรือ เอ"]
+];
+const L=[
+  ...C_RAW.map(r=>({kind:"c",ch:r[0],nm:r[1],nmTh:r[2],grp:r[3],snd:r[4],fin:r[5],syl:r[6],ex:r[7],tip:r[8]})),
+  ...V_RAW.map(r=>({kind:"v",ch:r[0],snd:r[1],grp:r[2],syl:r[3],ex:r[4],tip:r[5]}))
+].map((d,i)=>Object.assign(d,{id:i,key:"l"+i}));
+const GRP={plain:"เสียงธรรมดา",asp:"เสียงลมแรง",tense:"เสียงเกร็ง",other:"พยัญชนะอื่น",vb:"สระพื้นฐาน",vc:"สระผสม"};
+const NC=C_RAW.length,NV=V_RAW.length,QN=10;
+// 소리가 비슷해서 헷갈리는 묶음 (퀴즈 오답 보기에 우선 사용)
+const LOOK=[["ㄱ","ㅋ","ㄲ"],["ㄷ","ㅌ","ㄸ"],["ㅂ","ㅍ","ㅃ"],["ㅈ","ㅊ","ㅉ"],["ㅅ","ㅆ"],["ㄴ","ㄹ"],["ㅇ","ㅎ"],["ㅓ","ㅗ"],["ㅕ","ㅛ"],["ㅜ","ㅡ"],["ㅐ","ㅔ"],["ㅒ","ㅖ"],["ㅙ","ㅞ","ㅚ"],["ㅘ","ㅝ"],["ㅟ","ㅢ"]];
+const BY_CH=Object.fromEntries(L.map(d=>[d.ch,d]));
+
+/* ===== 단어: [분류, 한국어, 태국어 읽기, 태국어 뜻, 영어] ===== */
+const WCAT=[["basic","คำที่ใช้บ่อย"],["num","ตัวเลขและเงิน"],["food","อาหาร"],["place","สถานที่"]];
+const W_RAW=[
+["basic","네","เน","ใช่","yes"],["basic","아니요","อานีโย","ไม่ใช่","no"],["basic","얼마","ออลมา","เท่าไหร่","how much"],["basic","어디","ออดี","ที่ไหน","where"],
+["basic","있어요","อิซซอโย","มี","have, there is"],["basic","없어요","ออบซอโย","ไม่มี","don't have"],["basic","좋아요","โชอาโย","ดี, ชอบ","good, like"],["basic","맛있어요","มาชิซอโย","อร่อย","delicious"],
+["basic","비싸요","พีซาโย","แพง","expensive"],["basic","싸요","ซาโย","ถูก","cheap"],
+["num","일","อิล","หนึ่ง (ใช้กับราคา)","one"],["num","이","อี","สอง","two"],["num","삼","ซัม","สาม","three"],["num","사","ซา","สี่","four"],["num","오","โอ","ห้า","five"],
+["num","육","ยุก","หก","six"],["num","칠","ชิล","เจ็ด","seven"],["num","팔","พัล","แปด","eight"],["num","구","คู","เก้า","nine"],["num","십","ชิบ","สิบ","ten"],
+["num","백","แพก","ร้อย","hundred"],["num","천","ชอน","พัน","thousand"],["num","만","มัน","หมื่น","ten thousand"],["num","원","วอน","วอน (สกุลเงิน)","won"],
+["num","천 원","ชอนวอน","1,000 วอน","1,000 won"],["num","만 원","มันวอน","10,000 วอน","10,000 won"],
+["num","하나","ฮานา","หนึ่ง (ใช้นับสิ่งของ)","one (counting)"],["num","둘","ทุล","สอง (ใช้นับสิ่งของ)","two (counting)"],["num","셋","เซด","สาม (ใช้นับสิ่งของ)","three (counting)"],
+["food","밥","พับ","ข้าว","rice"],["food","물","มุล","น้ำ","water"],["food","고기","โคกี","เนื้อสัตว์","meat"],["food","돼지고기","ทแวจีโกกี","เนื้อหมู","pork"],
+["food","소고기","โซโกกี","เนื้อวัว","beef"],["food","닭고기","ทักโกกี","เนื้อไก่","chicken"],["food","김치","คิมชี","กิมจิ","kimchi"],["food","라면","รามยอน","รามยอน","ramyeon"],
+["food","커피","คอพี","กาแฟ","coffee"],["food","맥주","แมกจู","เบียร์","beer"],["food","맵다","แมบตา","เผ็ด","spicy"],["food","달다","ทัลดา","หวาน","sweet"],
+["place","화장실","ฮวาจังชิล","ห้องน้ำ","restroom"],["place","호텔","โฮเทล","โรงแรม","hotel"],["place","공항","คงฮัง","สนามบิน","airport"],["place","지하철","ชีฮาชอล","รถไฟใต้ดิน","subway"],
+["place","역","ยอก","สถานี","station"],["place","병원","พยองวอน","โรงพยาบาล","hospital"],["place","약국","ยักกุก","ร้านขายยา","pharmacy"],["place","편의점","พยอนีจอม","ร้านสะดวกซื้อ","convenience store"],
+["place","식당","ชิกตัง","ร้านอาหาร","restaurant"],["place","시장","ชีจัง","ตลาด","market"]
+];
+/* ===== 회화: [분류, 태국어 뜻, 한국어, 태국어 읽기, 영어] ===== */
+const SCAT=[["greet","ทักทาย"],["eat","ร้านอาหาร"],["shop","ช้อปปิ้ง"],["move","เดินทาง"],["stay","ที่พัก"],["help","ฉุกเฉิน"]];
+const S_RAW=[
+["greet","สวัสดี","안녕하세요","อันยองฮาเซโย","Hello."],
+["greet","ขอบคุณ","감사합니다","คัมซาฮัมนีดา","Thank you."],
+["greet","ขอโทษ","죄송합니다","ชเวซงฮัมนีดา","I'm sorry."],
+["greet","ไม่เป็นไร","괜찮아요","แควนชานาโย","It's okay."],
+["greet","ใช่","네","เน","Yes."],
+["greet","ไม่ใช่","아니요","อานีโย","No."],
+["greet","ฉันเป็นคนไทย","저는 태국 사람이에요","ชอนึน แทกุก ซารามีเอโย","I'm Thai."],
+["greet","ฉันพูดภาษาเกาหลีไม่เก่ง","한국어를 잘 못해요","ฮันกูกอรึล ชัล โมแทโย","I don't speak Korean well."],
+["greet","พูดภาษาอังกฤษได้ไหม","영어 할 줄 아세요?","ยองออ ฮัลจุล อาเซโย?","Do you speak English?"],
+["greet","ช่วยพูดช้า ๆ หน่อย","천천히 말해 주세요","ชอนชอนฮี มัลแฮ จูเซโย","Please speak slowly."],
+["greet","ช่วยพูดอีกครั้งได้ไหม","다시 한번 말해 주세요","ทาชี ฮันบอน มัลแฮ จูเซโย","Please say that again."],
+["greet","ห้องน้ำอยู่ที่ไหน","화장실이 어디예요?","ฮวาจังชีรี ออดีเยโย?","Where is the restroom?"],
+["eat","ขอโทษนะ (เรียกพนักงาน)","여기요!","ยอกีโย!","Excuse me! (calling staff)"],
+["eat","ขอเมนูหน่อย","메뉴판 주세요","เมนยูพัน จูเซโย","Menu, please."],
+["eat","เอาอันนี้","이거 주세요","อีกอ จูเซโย","I'll have this."],
+["eat","ขอสองที่","2인분 주세요","อีอินบุน จูเซโย","Two servings, please."],
+["eat","ช่วยแนะนำหน่อย","추천해 주세요","ชูชอนแฮ จูเซโย","What do you recommend?"],
+["eat","ขอไม่เผ็ด","안 맵게 해 주세요","อัน แมบเก แฮจูเซโย","Not spicy, please."],
+["eat","ขอน้ำหน่อย","물 좀 주세요","มุล จม จูเซโย","Water, please."],
+["eat","อร่อย","맛있어요","มาชิซอโย","It's delicious."],
+["eat","ห่อกลับบ้าน","포장해 주세요","โพจังแฮ จูเซโย","To go, please."],
+["eat","เช็กบิลด้วย","계산해 주세요","เคซันแฮ จูเซโย","Check, please."],
+["shop","อันนี้เท่าไหร่","이거 얼마예요?","อีกอ ออลมาเยโย?","How much is this?"],
+["shop","ลดหน่อยได้ไหม","깎아 주세요","กักกา จูเซโย","Can you give me a discount?"],
+["shop","จ่ายบัตรได้ไหม","카드 돼요?","คาดือ ดแวโย?","Can I pay by card?"],
+["shop","ซื้อแบบปลอดภาษีได้ไหม","면세 돼요?","มยอนเซ ดแวโย?","Is it tax-free?"],
+["shop","แค่ดูเฉย ๆ","그냥 구경하는 거예요","คือนยัง คูกยองฮานึน กอเยโย","I'm just looking."],
+["shop","มีสีอื่นไหม","다른 색 있어요?","ทารึน แซกิซซอโย?","Do you have other colors?"],
+["shop","ขอใบเสร็จด้วย","영수증 주세요","ยองซูจึง จูเซโย","Receipt, please."],
+["move","ไปที่นี่ (โชว์แผนที่)","여기로 가 주세요","ยอกีโร คา จูเซโย","Please take me here."],
+["move","ไปสนามบิน","공항으로 가 주세요","คงฮังอือโร คา จูเซโย","To the airport, please."],
+["move","รถเมล์คันนี้ไปเมียงดงไหม","이 버스 명동 가요?","อี บอซือ มยองดง คาโย?","Does this bus go to Myeongdong?"],
+["move","สถานีรถไฟใต้ดินอยู่ที่ไหน","지하철역이 어디예요?","ชีฮาชอลรยอกี ออดีเยโย?","Where is the subway station?"],
+["move","จอดตรงนี้","여기서 세워 주세요","ยอกีซอ เซวอ จูเซโย","Please stop here."],
+["move","ใช้เวลานานเท่าไหร่","얼마나 걸려요?","ออลมานา คอลรยอโย?","How long does it take?"],
+["move","เลี้ยวซ้าย","왼쪽으로 가 주세요","เวนโจกือโร คา จูเซโย","Turn left, please."],
+["move","เลี้ยวขวา","오른쪽으로 가 주세요","โอรึนโจกือโร คา จูเซโย","Turn right, please."],
+["stay","ขอเช็กอิน","체크인할게요","เชคืออินฮัลเกโย","I'd like to check in."],
+["stay","จองไว้แล้ว","예약했어요","เยยาแคซอโย","I have a reservation."],
+["stay","รหัสไวไฟคืออะไร","와이파이 비밀번호가 뭐예요?","วาอีพาอี พีมิลบอนโฮกา มวอเยโย?","What's the Wi-Fi password?"],
+["stay","ฝากกระเป๋าได้ไหม","짐 좀 맡겨도 돼요?","ชิม จม มัดกยอโด ดแวโย?","Can I leave my luggage?"],
+["stay","เช็กเอาต์กี่โมง","체크아웃은 몇 시예요?","เชคืออาอูซึน มยอดชีเยโย?","What time is check-out?"],
+["help","ช่วยด้วย!","도와주세요!","โทวาจูเซโย!","Help!"],
+["help","ช่วยเรียกตำรวจหน่อย","경찰을 불러 주세요","คยองชารึล พุลลอ จูเซโย","Please call the police."],
+["help","ต้องไปโรงพยาบาล","병원에 가야 해요","พยองวอเน คายา แฮโย","I need to go to the hospital."],
+["help","ไม่สบาย","몸이 안 좋아요","โมมี อัน โชอาโย","I don't feel well."],
+["help","หลงทาง","길을 잃었어요","คีรึล อีรอซซอโย","I'm lost."],
+["help","ทำพาสปอร์ตหาย","여권을 잃어버렸어요","ยอกวอนึล อีรอบอรยอซซอโย","I lost my passport."],
+["help","ร้านขายยาอยู่ที่ไหน","약국이 어디예요?","ยักกูกี ออดีเยโย?","Where is the pharmacy?"]
+];
+const WORDS=W_RAW.map((r,i)=>({key:"w"+i,cat:r[0],ko:r[1],rd:r[2],th:r[3],en:r[4]}));
+const SENTS=S_RAW.map((r,i)=>({key:"s"+i,cat:r[0],th:r[1],ko:r[2],rd:r[3],en:r[4]}));
+const XP=Object.fromEntries([...WORDS,...SENTS].map(x=>[x.key,x]));
+
+/* ===== 음절 만들기: 유니코드 한글 조합 순서 ===== */
+const INI=["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
+const VOW=["ㅏ","ㅐ","ㅑ","ㅒ","ㅓ","ㅔ","ㅕ","ㅖ","ㅗ","ㅘ","ㅙ","ㅚ","ㅛ","ㅜ","ㅝ","ㅞ","ㅟ","ㅠ","ㅡ","ㅢ","ㅣ"];
+const FIN_IDX={"":0,"ㄱ":1,"ㄲ":2,"ㄴ":4,"ㄷ":7,"ㄹ":8,"ㅁ":16,"ㅂ":17,"ㅅ":19,"ㅆ":20,"ㅇ":21,"ㅈ":22,"ㅊ":23,"ㅋ":24,"ㅌ":25,"ㅍ":26,"ㅎ":27};
+const FIN_OPTS=["","ㄱ","ㄴ","ㄷ","ㄹ","ㅁ","ㅂ","ㅅ","ㅇ","ㅈ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ","ㄲ","ㅆ"];
+const compose=(i,v,f)=>String.fromCharCode(0xAC00+(INI.indexOf(i)*21+VOW.indexOf(v))*28+FIN_IDX[f]);
+// 태국 문자로 읽기 (근사치)
+const TI={"ㄱ":"ค","ㄲ":"ก","ㄴ":"น","ㄷ":"ท","ㄸ":"ต","ㄹ":"ร","ㅁ":"ม","ㅂ":"พ","ㅃ":"ป","ㅅ":"ซ","ㅆ":"ซ","ㅇ":"อ","ㅈ":"ช","ㅉ":"จ","ㅊ":"ช","ㅋ":"ค","ㅌ":"ท","ㅍ":"พ","ㅎ":"ฮ"};
+const TF={"":"","ㄱ":"ก","ㄲ":"ก","ㅋ":"ก","ㄴ":"น","ㄷ":"ด","ㅅ":"ด","ㅆ":"ด","ㅈ":"ด","ㅊ":"ด","ㅌ":"ด","ㅎ":"ด","ㄹ":"ล","ㅁ":"ม","ㅂ":"บ","ㅍ":"บ","ㅇ":"ง"};
+const BASEV={"ㅏ":["Cา","CัF"],"ㅓ":["Cอ","CอF"],"ㅗ":["โC","โCF"],"ㅜ":["Cู","CุF"],"ㅡ":["Cือ","CึF"],"ㅣ":["Cี","CิF"],"ㅐ":["แC","แCF"],"ㅔ":["เC","เCF"]};
+const GLIDE={"ㅑ":["ยา","ยั"],"ㅕ":["ยอ","ยอ"],"ㅛ":["โย","โย"],"ㅠ":["ยู","ยุ"],"ㅒ":["แย","แย"],"ㅖ":["เย","เย"],"ㅘ":["วา","วั"],"ㅙ":["แว","แว"],"ㅚ":["เว","เว"],"ㅝ":["วอ","วอ"],"ㅞ":["เว","เว"],"ㅟ":["วี","วิ"],"ㅢ":["ึย","ึย"]};
+const YBASE={"ㅑ":"ㅏ","ㅕ":"ㅓ","ㅛ":"ㅗ","ㅠ":"ㅜ","ㅒ":"ㅐ","ㅖ":"ㅔ"};
+function thaiRead(i,v,f){
+  let C=TI[i],V=v;const F=TF[f]||"";
+  // ㅅ ㅆ ㅈ ㅉ ㅊ 뒤의 ㅑ ㅕ ㅛ ㅠ ㅒ ㅖ 는 '이' 소리가 묻혀서 기본 모음처럼 읽힘
+  if(["ㅅ","ㅆ","ㅈ","ㅉ","ㅊ"].includes(i)&&YBASE[V]){if(i==="ㅅ"||i==="ㅆ")C="ช";V=YBASE[V];}
+  if((i==="ㅅ"||i==="ㅆ")&&V==="ㅣ")C="ช";
+  if(BASEV[V])return BASEV[V][F?1:0].replace("C",C).replace("F",F);
+  const part=GLIDE[V][F?1:0]+F;
+  if(V==="ㅢ")return (i==="ㅇ"?"อ":C)+part;
+  return i==="ㅇ"?part:C+part;
+}
+const VERT=["ㅏ","ㅐ","ㅑ","ㅒ","ㅓ","ㅔ","ㅕ","ㅖ","ㅣ"],HORI=["ㅗ","ㅛ","ㅜ","ㅠ","ㅡ"];
+
+/* ===== 아이콘 ===== */
+const ICON={
+  speaker:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5H4z"/><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18.2 6.3a8 8 0 0 1 0 11.4"/></svg>',
+  expand:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5"/><path d="M20 9V4h-5"/><path d="M4 15v5h5"/><path d="M20 15v5h-5"/></svg>',
+  star:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.6l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>',
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg>',
+  dice:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9" cy="9" r="1.2" fill="currentColor"/><circle cx="15" cy="15" r="1.2" fill="currentColor"/><circle cx="15" cy="9" r="1.2" fill="currentColor"/><circle cx="9" cy="15" r="1.2" fill="currentColor"/></svg>'
+};
+
+/* ===== 유틸 ===== */
+const $=id=>document.getElementById(id);
+const $v=$("view"),$main=$("main");
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const reduceMotion=()=>{try{return matchMedia("(prefers-reduced-motion: reduce)").matches;}catch(e){return false;}};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const norm=s=>String(s).toLowerCase().replace(/[\s.,!?()/'’\-~]/g,"");
+function weighted(items,wf){
+  const w=items.map(wf);let r=Math.random()*w.reduce((a,b)=>a+b,0);
+  for(let i=0;i<items.length;i++){r-=w[i];if(r<=0&&w[i]>0)return items[i];}
+  return items.find((_,i)=>w[i]>0)||items[0];
+}
+
+/* ===== 화면 상태 ===== */
+let tab="letters",lView="card",filter="all",order=[],idx=0,flipped=false,busy=false,Q=null,lastKey="";
+let wcat="basic",scat="greet",wq="",sq="",qwcat="all",bI="ㅎ",bV="ㅏ",bF="ㄴ";
+
+/* ===== 저장 (이 기기 브라우저에만) ===== */
+const KEY="kofirst.v1";
+const S={known:[],stats:{},wstats:{},fav:[],streak:{last:"",n:0},hide:false,shuf:false,mode:"sound"};
+try{const raw=localStorage.getItem(KEY);if(raw)Object.assign(S,JSON.parse(raw));}catch(e){}
+if(!Array.isArray(S.known))S.known=[];
+if(!S.stats||typeof S.stats!=="object")S.stats={};
+if(!S.wstats||typeof S.wstats!=="object")S.wstats={};
+if(!S.streak||typeof S.streak!=="object")S.streak={last:"",n:0};
+S.fav=Array.isArray(S.fav)?S.fav.filter(k=>typeof k==="string"&&XP[k]):[];
+const known=new Set(S.known.filter(n=>Number.isInteger(n)&&n>=0&&n<L.length));
+function save(){S.known=[...known];try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+const ymd=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const yesterday=()=>{const d=new Date();d.setDate(d.getDate()-1);return ymd(d);};
+function touchStreak(){const t=ymd(new Date());if(S.streak.last===t)return;S.streak.n=S.streak.last===yesterday()?S.streak.n+1:1;S.streak.last=t;}
+function streakNow(){const l=S.streak.last;return (l===ymd(new Date())||l===yesterday())?S.streak.n:0;}
+
+/* ===== 한국어 음성 (기기 TTS) ===== */
+const hasTTS="speechSynthesis" in window;
+let koVoice=null,voicesReady=false;
+function loadVoices(){
+  if(!hasTTS)return;
+  try{const vs=speechSynthesis.getVoices();if(vs.length){voicesReady=true;koVoice=vs.find(v=>/^ko([-_]|$)/i.test(v.lang))||null;}}catch(e){}
+}
+if(hasTTS){loadVoices();try{speechSynthesis.onvoiceschanged=()=>{const had=!!koVoice;loadVoices();if(had!==!!koVoice&&tab==="quiz")render();};}catch(e){}}
+function speak(text){
+  if(!hasTTS){toast("เบราว์เซอร์นี้เล่นเสียงไม่ได้");return;}
+  loadVoices();
+  if(voicesReady&&!koVoice){toast("เครื่องนี้ไม่มีเสียงภาษาเกาหลี ติดตั้งได้ในการตั้งค่าแปลงข้อความเป็นเสียง (TTS)");return;}
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang="ko-KR";if(koVoice)u.voice=koVoice;u.rate=.8;
+    speechSynthesis.speak(u);
+  }catch(e){toast("เล่นเสียงไม่ได้");}
+}
+let toastT=0;
+function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),2600);}
+
+/* ===== 공통 조각 ===== */
+const baseIds=()=>L.filter(d=>filter==="all"||d.kind===filter).map(d=>d.id);
+function rebuild(){order=baseIds();if(S.shuf)shuffle(order);idx=0;}
+const visible=id=>!(S.hide&&known.has(id));
+function current(){
+  for(let k=0;k<order.length;k++){const i=(idx+k)%order.length;if(visible(order[i])){idx=i;return L[order[i]];}}
+  return null;
+}
+function chipsHTML(){
+  return `<div class="filters" role="group" aria-label="หมวดตัวอักษร">${[["all",`ทั้งหมด ${L.length}`],["c",`พยัญชนะ ${NC}`],["v",`สระ ${NV}`]]
+    .map(([k,l])=>`<button class="chip" data-f="${k}" aria-pressed="${filter===k}">${l}</button>`).join("")}</div>`;
+}
+const cellHTML=id=>{const d=L[id],k=known.has(id);
+  return `<button class="cell${k?" known":""}" data-j="${id}" aria-label="${d.ch} ${esc(d.snd)}${k?" จำได้แล้ว":""}"><span class="g ko t-${d.grp}" lang="ko">${d.ch}</span><span class="k">${d.snd}</span></button>`;};
+const starBtn=key=>{const f=S.fav.includes(key);return `<button class="ibtn star" data-star="${key}" aria-pressed="${f}" aria-label="${f?"เลิกบันทึก":"บันทึก"}">${ICON.star}</button>`;};
+const searchHTML=(val,label)=>`<div class="search">${ICON.search}<input id="q" type="search" enterkeyhint="search" autocomplete="off" placeholder="ค้นหาด้วยภาษาไทย อังกฤษ หรือเกาหลี" aria-label="${label}" value="${esc(val)}"></div>`;
+const catChips=(list,cur,attr,searching)=>`<div class="filters" role="group" aria-label="หมวด">${[["fav","★ ที่บันทึกไว้"],...list]
+  .map(([k,l])=>`<button class="chip" data-${attr}="${k}" aria-pressed="${!searching&&cur===k}">${l}</button>`).join("")}</div>`;
+const hay=x=>norm(x.ko+x.th+x.en+x.rd);
+
+function renderTop(){
+  $("count").textContent=`ตัวอักษร ${known.size}/${L.length}`;
+  $("count").setAttribute("aria-label",`จำได้แล้ว ${known.size} จาก ${L.length} ตัว`);
+  const n=streakNow();$("streak").textContent=n?`🔥 ${n} วัน`:"";
+  $("bar").hidden=tab!=="letters";
+  const kc=L.filter(d=>d.kind==="c"&&known.has(d.id)).length,kv=L.filter(d=>d.kind==="v"&&known.has(d.id)).length;
+  $("bar").innerHTML=`<span class="seg" style="flex:${NC}"><i class="c-plain" style="width:${(kc/NC*100).toFixed(1)}%"></i></span><span class="seg" style="flex:${NV}"><i class="c-vb" style="width:${(kv/NV*100).toFixed(1)}%"></i></span>`;
+}
+
+/* ===== 글자 탭 ===== */
+function backHTML(d){
+  const ex=d.ex;
+  const facts=d.kind==="c"
+    ?`<div><span>เสียงต้น</span><b>${d.snd}</b></div><div><span>ตัวสะกด</span><b>${d.fin==="—"?"ไม่ใช้":d.fin}</b></div>`
+    :`<div><span>เสียง</span><b>${d.snd}</b></div><div><span>เขียนกับ ㅇ</span><b class="ko" lang="ko">${d.syl}</b></div>`;
+  return `<span class="tag c-${d.grp}">${GRP[d.grp]}</span>
+    ${known.has(d.id)?`<span class="pos ok-t">จำได้แล้ว</span>`:""}
+    <div class="pair"><span class="g2 ko t-${d.grp}" lang="ko">${d.ch}</span><span class="emo" aria-hidden="true">${ex[4]}</span></div>
+    ${d.kind==="c"?`<div class="name"><span class="ko" lang="ko">${d.nm}</span> <small>${d.nmTh}</small></div>`:""}
+    <div class="facts">${facts}</div>
+    <div class="ex"><div class="ko" lang="ko">${ex[0]}</div><div class="rd">${ex[1]}</div><div class="mn">${ex[2]}</div><div class="en" lang="en">${ex[3]}</div></div>
+    <p class="tip">${d.tip}</p>`;
+}
+function renderLetters(){
+  let h=`<div class="switch" role="group" aria-label="รูปแบบการดู"><button data-act="lv-card" aria-pressed="${lView==="card"}">การ์ด</button><button data-act="lv-list" aria-pressed="${lView==="list"}">ทั้งหมด</button></div>`+chipsHTML();
+  if(lView==="list"){
+    const ids=baseIds(),k=ids.filter(id=>known.has(id)).length;
+    const groups=filter==="v"?["vb","vc"]:filter==="c"?["plain","asp","tense","other"]:["plain","asp","tense","other","vb","vc"];
+    h+=`<div class="legend">${groups.map(g=>`<span><i class="c-${g}"></i>${GRP[g]}</span>`).join("")}<span style="margin-left:auto;color:var(--muted)">จำได้ ${k} / ${ids.length}</span></div><div class="grid">${ids.map(cellHTML).join("")}</div>`;
+    $v.innerHTML=h;return;
+  }
+  h+=`<div class="toggles"><button class="tog" data-act="hide" aria-pressed="${S.hide}">ซ่อนตัวที่จำได้แล้ว</button><button class="tog" data-act="shuf" aria-pressed="${S.shuf}">สุ่มลำดับ</button></div>`;
+  const d=current();
+  if(!d){
+    h+=`<div class="empty"><div class="empty-g ko" lang="ko">완료</div><p>จำได้ครบทุกตัวในหมวดนี้แล้ว</p><button class="btn primary wide" data-act="showall">แสดงทั้งหมดอีกครั้ง</button></div>`;
+    $v.innerHTML=h;return;
+  }
+  const vis=order.filter(visible),pos=vis.indexOf(d.id)+1;
+  h+=`<div class="flip enter" id="card" tabindex="0" role="button" aria-label="${flipped?"ดูด้านหน้า":"พลิกเพื่อดูเสียง"}">
+    <span class="stamp again" id="stA">ดูอีกครั้ง</span><span class="stamp ok" id="stO">จำได้แล้ว</span>
+    <div class="inner${flipped?" on":""}" id="inner">
+      <div class="face front">
+        <span class="tag c-${d.grp}">${GRP[d.grp]}</span>
+        <span class="pos">${pos} / ${vis.length}</span>
+        <div class="wg"><span class="jamo t-${d.grp}" lang="ko">${d.ch}</span></div>
+        <div class="hint">แตะเพื่อพลิก</div>
+      </div>
+      <div class="face back">${backHTML(d)}</div>
+    </div>
+  </div>
+  <div class="row">
+    <button class="btn" data-act="again">ดูอีกครั้ง</button>
+    <button class="btn sq" data-act="sayl" aria-label="ฟังเสียง">${ICON.speaker}</button>
+    <button class="btn primary" data-act="got">จำได้แล้ว</button>
+  </div>
+  <p class="hint2 touch">ปัดซ้าย = ดูอีกครั้ง, ปัดขวา = จำได้แล้ว</p>
+  <p class="hint2 keys">Space พลิกการ์ด, ← → เลื่อน</p>`;
+  $v.innerHTML=h;
+  bindSwipe($("card"));
+}
+function toggleFlip(){
+  const inner=$("inner"),c=$("card");if(!inner)return;
+  flipped=!flipped;inner.classList.toggle("on",flipped);
+  c.setAttribute("aria-label",flipped?"ดูด้านหน้า":"พลิกเพื่อดูเสียง");
+}
+// 밀기: 오른쪽 = 외웠어요, 왼쪽 = 다시 보기, 살짝 누르기 = 뒤집기
+function bindSwipe(card){
+  let sx=0,dx=0,down=false,moved=false;
+  const stA=$("stA"),stO=$("stO");
+  const reset=()=>{card.style.transition="";card.style.transform="";stA.style.opacity=0;stO.style.opacity=0;};
+  card.addEventListener("pointerdown",e=>{if(busy)return;down=true;moved=false;sx=e.clientX;dx=0;card.style.transition="none";try{card.setPointerCapture(e.pointerId);}catch(_){}});
+  card.addEventListener("pointermove",e=>{
+    if(!down)return;dx=e.clientX-sx;if(Math.abs(dx)>6)moved=true;if(!moved)return;
+    card.style.transform=`translateX(${dx}px) rotate(${dx/24}deg)`;
+    const p=Math.min(Math.abs(dx)/90,1);stO.style.opacity=dx>0?p:0;stA.style.opacity=dx<0?p:0;
+  });
+  card.addEventListener("pointerup",()=>{
+    if(!down)return;down=false;card.style.transition="";
+    if(Math.abs(dx)>90){dx>0?markKnown():markAgain();}
+    else{reset();if(!moved)toggleFlip();}
+  });
+  card.addEventListener("pointercancel",()=>{down=false;reset();});
+}
+function fly(dir,after){
+  const c=$("card");
+  if(!c||reduceMotion()){after();return;}
+  busy=true;
+  c.style.transition="transform .2s ease-in, opacity .2s ease-in";
+  c.style.transform=`translateX(${dir*120}%) rotate(${dir*14}deg)`;
+  c.style.opacity="0";
+  setTimeout(()=>{busy=false;after();},190);
+}
+function advance(){idx=order.length?(idx+1)%order.length:0;flipped=false;render();}
+function markKnown(){if(busy)return;const d=current();if(!d)return;known.add(d.id);touchStreak();save();fly(1,advance);}
+function markAgain(){if(busy)return;const d=current();if(!d)return;known.delete(d.id);touchStreak();save();fly(-1,advance);}
+function jump(id){
+  if(S.hide&&known.has(id)){S.hide=false;save();}
+  if(filter!=="all"&&L[id].kind!==filter){filter="all";Q=null;}
+  rebuild();idx=Math.max(0,order.indexOf(id));flipped=true;lView="card";setTab("letters");
+}
+
+/* ===== 음절 만들기 탭 ===== */
+function buildCardHTML(){
+  const syl=compose(bI,bV,bF),rd=thaiRead(bI,bV,bF);
+  const orient=VERT.includes(bV)?"สระแนวตั้ง วางทางขวาของพยัญชนะต้น":HORI.includes(bV)?"สระแนวนอน วางใต้พยัญชนะต้น":"สระผสม วางทั้งด้านล่างและด้านขวา";
+  const finNote=bF?`ตัวสะกด <span class="ko" lang="ko">${bF}</span> ออกเสียงเป็น ${TF[bF]}`:"ไม่มีตัวสะกด";
+  return `
+  <div class="build" id="bview">
+    <div class="wg sm"><span class="jamo" lang="ko">${syl}</span></div>
+    <div class="rd">${rd}</div>
+    <div class="formula ko" lang="ko">${bI} + ${bV}${bF?" + "+bF:""} = ${syl}</div>
+    <p class="bnote">${orient}<br>${finNote}</p>
+    <div class="row" style="width:100%"><button class="btn" data-act="brand">${ICON.dice}<span style="margin-left:6px">สุ่ม</span></button><button class="btn primary" data-act="bsay">${ICON.speaker}<span style="margin-left:6px">ฟังเสียง</span></button></div>
+  </div>`;
+}
+const chipRow=(list,cur,attr,label,lab)=>`<p class="blabel">${label}</p><div class="filters" role="group" aria-label="${label}">${list.map(x=>`<button class="chip ko" lang="ko" data-${attr}="${x||"0"}" aria-pressed="${cur===x}">${x||lab}</button>`).join("")}</div>`;
+function renderBuild(){
+  $v.innerHTML=`<p class="sub">เลือกพยัญชนะต้น สระ และตัวสะกด แล้วดูว่าประกอบเป็นพยางค์อะไร</p>${buildCardHTML()}
+  ${chipRow(INI,bI,"bi","พยัญชนะต้น")}
+  ${chipRow(VOW,bV,"bv","สระ")}
+  ${chipRow(FIN_OPTS,bF,"bf","ตัวสะกด","ไม่มี")}`;
+}
+// 결과 카드와 눌린 상태만 바꿈
+function refreshBuild(center){
+  const box=$("bview");if(!box){render();return;}
+  box.outerHTML=buildCardHTML();
+  [["bi",bI],["bv",bV],["bf",bF||"0"]].forEach(([a,val])=>$v.querySelectorAll(`[data-${a}]`).forEach(b=>{
+    const on=b.dataset[a]===val;b.setAttribute("aria-pressed",String(on));
+    if(on&&center&&b.scrollIntoView){try{b.scrollIntoView({block:"nearest",inline:"center"});}catch(e){}}
+  }));
+}
+
+/* ===== 단어 탭 ===== */
+function wordRow(x){
+  return `<div class="wd">
+    <button class="wd-main" data-say="${x.key}" aria-label="${esc(x.th)} ฟังเสียง">
+      <span class="wd-ko ko" lang="ko">${x.ko}</span>
+      <span class="wd-txt"><b>${x.th}</b><span class="wd-rd">${x.rd}</span><span class="wd-en" lang="en">${x.en}</span></span>
+    </button>
+    <button class="ibtn" data-big="${x.key}" aria-label="ขยายใหญ่">${ICON.expand}</button>
+    ${starBtn(x.key)}
+  </div>`;
+}
+function wordListHTML(){
+  const q=norm(wq);
+  const items=q?WORDS.filter(x=>hay(x).includes(q)):wcat==="fav"?WORDS.filter(x=>S.fav.includes(x.key)):WORDS.filter(x=>x.cat===wcat);
+  if(!items.length)return `<p class="none">${q?`ไม่พบคำว่า “${esc(wq.trim())}”`:"ยังไม่มีคำที่บันทึกไว้ กดดาวเพื่อเก็บคำที่ใช้บ่อย"}</p>`;
+  const note=!q&&wcat==="num"?`<p class="sub">ราคาใช้ตัวเลขแบบ 일 이 삼 ส่วนการนับสิ่งของใช้แบบ 하나 둘 셋</p>`:"";
+  return note+items.map(wordRow).join("");
+}
+function renderWords(){
+  $v.innerHTML=searchHTML(wq,"ค้นหาคำศัพท์")+catChips(WCAT,wcat,"wc",!!norm(wq))+`<p class="sub">แตะคำเพื่อฟังเสียง</p><div class="wlist" id="plist">${wordListHTML()}</div>`;
+  bindSearch(v=>{wq=v;},"wc",()=>wcat,()=>wq);
+}
+
+/* ===== 회화 탭 ===== */
+function phrCard(x){
+  return `<article class="xp">
+    <div class="xp-top"><h3 class="xp-th">${x.th}</h3>${starBtn(x.key)}</div>
+    <p class="xp-ko ko" lang="ko">${x.ko}</p>
+    <p class="xp-rd">${x.rd}</p>
+    <p class="xp-en" lang="en">${x.en}</p>
+    <div class="xp-act"><button class="mini" data-say="${x.key}">${ICON.speaker}<span>ฟัง</span></button><button class="mini" data-big="${x.key}">${ICON.expand}<span>ขยายใหญ่</span></button></div>
+  </article>`;
+}
+function sentListHTML(){
+  const q=norm(sq);
+  const items=q?SENTS.filter(x=>hay(x).includes(q)):scat==="fav"?SENTS.filter(x=>S.fav.includes(x.key)):SENTS.filter(x=>x.cat===scat);
+  if(!items.length)return `<p class="none">${q?`ไม่พบประโยค “${esc(sq.trim())}”`:"ยังไม่มีประโยคที่บันทึกไว้ กดดาวเพื่อเก็บประโยคที่ใช้บ่อย"}</p>`;
+  return items.map(phrCard).join("");
+}
+function renderPhr(){
+  $v.innerHTML=searchHTML(sq,"ค้นหาประโยค")+catChips(SCAT,scat,"sc",!!norm(sq))+`<div id="plist">${sentListHTML()}</div>`;
+  bindSearch(v=>{sq=v;},"sc",()=>scat,()=>sq);
+}
+// 검색창은 그대로 두고 목록만 다시 그려서 입력 중 포커스 유지
+function bindSearch(set,attr,getCat,getQ){
+  const inp=$("q");if(!inp)return;
+  inp.addEventListener("input",()=>{
+    set(inp.value);updateList();
+    const s=!!norm(getQ());
+    $v.querySelectorAll(`[data-${attr}]`).forEach(b=>b.setAttribute("aria-pressed",String(!s&&b.dataset[attr]===getCat())));
+  });
+}
+function updateList(){const p=$("plist");if(!p)return;if(tab==="words")p.innerHTML=wordListHTML();else if(tab==="phr")p.innerHTML=sentListHTML();}
+function toggleFav(key){
+  const i=S.fav.indexOf(key);if(i>=0)S.fav.splice(i,1);else S.fav.push(key);save();
+  const f=S.fav.includes(key);
+  const viewingFav=(tab==="words"&&wcat==="fav"&&!norm(wq))||(tab==="phr"&&scat==="fav"&&!norm(sq));
+  if(viewingFav)updateList();
+  else $v.querySelectorAll(`[data-star="${key}"]`).forEach(b=>{b.setAttribute("aria-pressed",String(f));b.setAttribute("aria-label",f?"เลิกบันทึก":"บันทึก");});
+  toast(f?"★ บันทึกแล้ว":"นำออกจากที่บันทึกไว้แล้ว");
+}
+
+/* ===== 크게 보기 (한국인에게 보여주기) ===== */
+let bigKey=null,bigFrom=null;
+function openBig(key,from){
+  const x=XP[key];if(!x)return;
+  bigKey=key;bigFrom=from||null;
+  $("bvKo").textContent=x.ko;$("bvRd").textContent=x.rd;$("bvTh").textContent=x.th;$("bvEn").textContent=x.en;
+  $("bigv").hidden=false;$("bvClose").focus();
+}
+function closeBig(){$("bigv").hidden=true;if(bigFrom&&document.contains(bigFrom))bigFrom.focus();bigKey=null;bigFrom=null;}
+$("bvClose").onclick=closeBig;
+$("bvSay").onclick=()=>{if(bigKey)speak(XP[bigKey].ko);};
+
+/* ===== 퀴즈 ===== */
+const MODES=[["sound","ดูตัวอักษร เลือกเสียง"],["listen","ฟังแล้วเลือกตัวอักษร"],["word","คำศัพท์"]];
+const listenOK=()=>!!koVoice;
+const curMode=()=>{const m=MODES.some(x=>x[0]===S.mode)?S.mode:"sound";return m==="listen"&&!listenOK()?"sound":m;};
+function lookalikes(d){const s=new Set();LOOK.forEach(g=>{if(g.includes(d.ch))g.forEach(c=>{if(c!==d.ch)s.add(BY_CH[c].id);});});return [...s];}
+function newSession(){Q={mode:curMode(),n:0,ok:0,res:[],wrong:[],asked:{},done:false,q:null};nextQ();}
+function pickFrom(pool,base){
+  return weighted(pool,x=>{
+    if(x.key===lastKey&&pool.length>1)return 0;
+    return Math.max(.4,base(x))/(1+(Q.asked[x.key]||0)*1.5);
+  });
+}
+// 보기 채우기: 같은 글자나 같은 뜻이 두 번 나오지 않게
+function fill(pick,ans,others,labelOf){
+  const used=new Set([labelOf(ans),...pick.map(labelOf)]);
+  for(const x of shuffle(others.slice())){
+    if(pick.length>=3)break;
+    const l=labelOf(x);if(x.key===ans.key||used.has(l))continue;
+    used.add(l);pick.push(x);
+  }
+  return pick;
+}
+function nextQ(){
+  const m=Q.mode;let ans,opts;
+  if(m==="word"){
+    const pool=WORDS.filter(x=>qwcat==="all"||x.cat===qwcat);
+    ans=pickFrom(pool,x=>{const s=S.wstats[x.key]||{ok:0,ng:0};return 2+Math.min(s.ng,3)*1.5-s.ok*.4;});
+    const pick=fill([],ans,WORDS.filter(x=>x.cat===ans.cat),x=>x.th);fill(pick,ans,WORDS,x=>x.th);
+    opts=shuffle([ans,...pick]);
+  }else{
+    const pool=baseIds().map(id=>L[id]);
+    ans=pickFrom(pool,d=>{const s=S.stats[d.id]||{ok:0,ng:0};return (known.has(d.id)?1:3)+Math.min(s.ng,3)*1.5-s.ok*.3;});
+    const same=L.filter(d=>d.kind===ans.kind);
+    const lab=d=>m==="sound"?d.snd:d.ch;
+    const pick=fill([],ans,shuffle(lookalikes(ans).map(id=>L[id])).slice(0,2),lab);fill(pick,ans,same,lab);
+    opts=shuffle([ans,...pick]);
+  }
+  lastKey=ans.key;Q.asked[ans.key]=(Q.asked[ans.key]||0)+1;
+  Q.q={ans,opts,picked:null,played:false};
+}
+function answer(key){
+  const q=Q&&Q.q;if(!q||q.picked!==null)return;
+  q.picked=key;const ok=key===q.ans.key;
+  if(Q.mode==="word"){const s=S.wstats[q.ans.key]||(S.wstats[q.ans.key]={ok:0,ng:0});if(ok)s.ok++;else s.ng++;}
+  else{const s=S.stats[q.ans.id]||(S.stats[q.ans.id]={ok:0,ng:0});if(ok){s.ok++;known.add(q.ans.id);}else{s.ng++;known.delete(q.ans.id);}}
+  if(ok)Q.ok++;
+  else{Q.wrong.push(q.ans.key);try{if(navigator.vibrate)navigator.vibrate(50);}catch(e){}}
+  Q.res[Q.n]=ok;touchStreak();save();render();
+}
+function nextOrFinish(){Q.n++;if(Q.n>=QN)Q.done=true;else nextQ();render();}
+const qSay=()=>{if(!Q||!Q.q)return;const a=Q.q.ans;speak(Q.mode==="word"?a.ko:a.syl);};
+function renderQuiz(){
+  if(!Q||Q.mode!==curMode())newSession();
+  const mode=Q.mode;
+  let h=`<div class="filters" role="group" aria-label="รูปแบบแบบทดสอบ">${MODES.map(([k,l])=>{
+    const off=k==="listen"&&!listenOK();
+    return `<button class="chip" data-m="${k}" aria-pressed="${mode===k}"${off?' disabled title="ใช้ได้เมื่อเครื่องมีเสียงภาษาเกาหลี"':""}>${l}</button>`;
+  }).join("")}</div>`;
+  h+=mode==="word"
+    ?`<div class="filters" role="group" aria-label="หมวดคำศัพท์">${[["all","ทั้งหมด"],...WCAT].map(([k,l])=>`<button class="chip" data-qw="${k}" aria-pressed="${qwcat===k}">${l}</button>`).join("")}</div>`
+    :chipsHTML();
+  if(Q.done){
+    const wr=[...new Set(Q.wrong)];
+    const msg=Q.ok===QN?"ถูกทั้งหมด! ลองหมวดอื่นดูนะ":Q.ok>=7?"เกือบแล้ว ทบทวนเฉพาะข้อที่ผิดอีกนิด":"ทบทวนอีกครั้งแล้วลองใหม่นะ";
+    const list=!wr.length?"":mode==="word"
+      ?`<p class="sub">แตะคำที่ตอบผิดเพื่อฟังเสียง</p><div class="wlist">${wr.map(k=>wordRow(XP[k])).join("")}</div>`
+      :`<p class="sub">แตะตัวอักษรที่ตอบผิดเพื่อดูการ์ด</p><div class="grid">${wr.map(k=>cellHTML(+k.slice(1))).join("")}</div>`;
+    $v.innerHTML=h+`<div class="result"><div class="big">${Q.ok}<small> / ${QN}</small></div><p class="msg">${msg}</p>${list}<button class="btn primary wide" data-act="restart">เริ่มแบบทดสอบใหม่</button></div>`;
+    return;
+  }
+  const {ans,opts,picked}=Q.q,done=picked!==null,ok=picked===ans.key;
+  h+=`<div class="qhead"><span>ข้อ ${Q.n+1} / ${QN}</span><div class="dots" aria-hidden="true">${Array.from({length:QN},(_,i)=>
+    `<i class="${Q.res[i]===true?"d-ok":Q.res[i]===false?"d-ng":""}${i===Q.n?" d-now":""}"></i>`).join("")}</div></div>`;
+  const sayBtn=`<button class="mini" data-act="sayq">${ICON.speaker}<span>ฟัง</span></button>`;
+  const lAns=d=>`<div class="ans"><b><span class="ko" lang="ko">${d.ch}</span> = ${d.snd}</b><span class="a-rd">ตัวอย่าง <span class="ko" lang="ko">${d.ex[0]}</span> ${d.ex[1]}</span><span class="a-en">${d.ex[2]}, ${d.ex[3]}</span></div>`;
+  if(mode==="word"){
+    h+=`<div class="qcard"><div class="qword ko" lang="ko">${ans.ko}</div>${sayBtn}${done
+      ?`<div class="ans"><b>${ans.th}</b><span class="a-rd">${ans.rd}</span><span class="a-en" lang="en">${ans.en}</span></div>`
+      :`<div class="meta">คำนี้แปลว่าอะไร</div>`}</div>`;
+  }else if(mode==="sound"){
+    h+=`<div class="qcard"><span class="tag c-${ans.grp}">${GRP[ans.grp]}</span><div class="wg sm"><span class="jamo t-${ans.grp}" lang="ko">${ans.ch}</span></div>${done?sayBtn+lAns(ans):`<div class="meta">ตัวนี้ออกเสียงอะไร</div>`}</div>`;
+  }else{
+    h+=`<div class="qcard"><button class="listen" data-act="sayq" aria-label="ฟังอีกครั้ง">${ICON.speaker}</button>${done?lAns(ans):`<div class="meta">${ans.kind==="c"?"ฟังพยัญชนะ (ออกเสียงคู่กับ <span class=\"ko\" lang=\"ko\">ㅏ</span>) แล้วเลือกตัวที่ได้ยิน":"ฟังสระ (เขียนคู่กับ <span class=\"ko\" lang=\"ko\">ㅇ</span>) แล้วเลือกตัวที่ได้ยิน"}</div>`}</div>`;
+  }
+  h+=`<div class="opts">${opts.map(o=>{
+    let c="";if(done){if(o.key===ans.key)c=" right";else if(o.key===picked)c=" wrong";}
+    let inner;
+    if(mode==="word")inner=`<span class="o-main">${o.th}</span>${done?`<span class="o-sub ko" lang="ko">${o.ko}</span>`:""}<span class="o-sub" lang="en">${o.en}</span>`;
+    else if(mode==="sound")inner=`<span class="o-main">${o.snd}</span>${done?`<span class="o-sub ko" lang="ko">${o.ch}</span>`:""}`;
+    else inner=`<span class="o-g ko" lang="ko">${o.ch}</span>${done?`<span class="o-sub">${o.snd}</span>`:""}`;
+    return `<button class="opt${c}" data-o="${o.key}"${done?" disabled":""}>${inner}</button>`;
+  }).join("")}</div>`;
+  if(done){
+    const fb=ok?"ถูกต้อง!":mode==="word"?`คำตอบคือ ${ans.th}`:`คำตอบคือ ${ans.ch} (${ans.snd})`;
+    h+=`<div class="fb ${ok?"ok":"ng"}">${fb}</div>
+    <div class="row"><button class="btn sq" data-act="sayq" aria-label="ฟังเสียง">${ICON.speaker}</button><button class="btn primary" data-act="next">${Q.n+1>=QN?"ดูผลลัพธ์":"ข้อต่อไป"}</button></div>`;
+  }
+  $v.innerHTML=h;
+  const nx=$v.querySelector('[data-act="next"]');if(nx){try{nx.focus({preventScroll:true});}catch(e){}}
+  if(mode==="listen"&&!done&&!Q.q.played){Q.q.played=true;qSay();}
+}
+
+/* ===== 렌더링/이벤트 ===== */
+function render(){
+  renderTop();
+  ({letters:renderLetters,build:renderBuild,words:renderWords,phr:renderPhr,quiz:renderQuiz})[tab]();
+}
+function setTab(t){
+  tab=t;
+  document.querySelectorAll("nav.tabs button").forEach(b=>{if(b.dataset.tab===t)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current");});
+  render();$main.scrollTop=0;
+}
+function act(a){
+  switch(a){
+    case "lv-card":case "lv-list":{const v=a.slice(3);if(lView!==v){lView=v;flipped=false;render();}break;}
+    case "got":markKnown();break;
+    case "again":markAgain();break;
+    case "sayl":{const d=current();if(d)speak(`${d.syl}. ${d.ex[0]}`);break;}
+    case "hide":S.hide=!S.hide;save();flipped=false;render();break;
+    case "shuf":S.shuf=!S.shuf;save();rebuild();flipped=false;render();break;
+    case "showall":S.hide=false;save();render();break;
+    case "restart":newSession();render();break;
+    case "next":nextOrFinish();break;
+    case "sayq":qSay();break;
+    case "bsay":speak(compose(bI,bV,bF));break;
+    case "brand":bI=INI[Math.floor(Math.random()*INI.length)];bV=VOW[Math.floor(Math.random()*VOW.length)];bF=Math.random()<.5?"":FIN_OPTS[1+Math.floor(Math.random()*(FIN_OPTS.length-1))];refreshBuild(true);speak(compose(bI,bV,bF));break;
+  }
+}
+// 화면 안의 모든 버튼 클릭을 한 곳에서 처리
+$v.addEventListener("click",e=>{
+  const b=e.target.closest("[data-act],[data-f],[data-m],[data-qw],[data-wc],[data-sc],[data-j],[data-say],[data-big],[data-star],[data-o],[data-bi],[data-bv],[data-bf]");
+  if(!b||!$v.contains(b)||b.disabled)return;
+  const ds=b.dataset;
+  if(ds.act){act(ds.act);return;}
+  if(ds.f!==undefined){if(filter!==ds.f){filter=ds.f;rebuild();flipped=false;Q=null;render();}return;}
+  if(ds.m){if(S.mode!==ds.m){S.mode=ds.m;save();Q=null;render();}return;}
+  if(ds.qw){if(qwcat!==ds.qw){qwcat=ds.qw;Q=null;render();}return;}
+  if(ds.wc){wcat=ds.wc;wq="";render();return;}
+  if(ds.sc){scat=ds.sc;sq="";render();return;}
+  if(ds.j!==undefined){jump(+ds.j);return;}
+  if(ds.say){speak(XP[ds.say].ko);return;}
+  if(ds.big){openBig(ds.big,b);return;}
+  if(ds.star){toggleFav(ds.star);return;}
+  if(ds.o){answer(ds.o);return;}
+  if(ds.bi){bI=ds.bi;refreshBuild();speak(compose(bI,bV,bF));return;}
+  if(ds.bv){bV=ds.bv;refreshBuild();speak(compose(bI,bV,bF));return;}
+  if(ds.bf!==undefined){bF=ds.bf==="0"?"":ds.bf;refreshBuild();speak(compose(bI,bV,bF));return;}
+});
+document.querySelectorAll("nav.tabs button").forEach(b=>b.addEventListener("click",()=>{if(tab===b.dataset.tab)return;flipped=false;setTab(b.dataset.tab);}));
+
+let resetArmed=false,resetT=0;
+function openSheet(){
+  $("voiceState").textContent=!hasTTS?"เบราว์เซอร์นี้เล่นเสียงไม่ได้"
+    :koVoice?`ใช้เสียงภาษาเกาหลีได้ (${koVoice.name})`
+    :voicesReady?"เครื่องนี้ไม่มีเสียงภาษาเกาหลี ติดตั้งเสียงภาษาเกาหลีได้ในการตั้งค่าแปลงข้อความเป็นเสียง (TTS) ของเครื่อง"
+    :"กำลังตรวจสอบเสียงของเครื่อง ลองกดปุ่มลำโพงดูก่อน";
+  resetArmed=false;$("reset").textContent="ล้างประวัติการเรียน";
+  $("sheet").hidden=false;$("closeSheet").focus();
+}
+function closeSheet(){$("sheet").hidden=true;$("infoBtn").focus();}
+$("infoBtn").onclick=openSheet;
+$("closeSheet").onclick=closeSheet;
+$("sheet").addEventListener("click",e=>{if(e.target.id==="sheet")closeSheet();});
+// 실수 방지: 두 번 눌러야 초기화 (저장한 표현은 유지)
+$("reset").onclick=()=>{
+  if(!resetArmed){
+    resetArmed=true;$("reset").textContent="กดอีกครั้งเพื่อลบทั้งหมด";
+    clearTimeout(resetT);resetT=setTimeout(()=>{resetArmed=false;$("reset").textContent="ล้างประวัติการเรียน";},3000);
+    return;
+  }
+  clearTimeout(resetT);resetArmed=false;
+  known.clear();S.stats={};S.wstats={};S.streak={last:"",n:0};save();
+  Q=null;rebuild();flipped=false;closeSheet();render();toast("ล้างประวัติแล้ว");
+};
+document.addEventListener("keydown",e=>{
+  if(!$("bigv").hidden){if(e.key==="Escape")closeBig();return;}
+  if(!$("sheet").hidden){if(e.key==="Escape")closeSheet();return;}
+  if(tab!=="letters"||lView!=="card")return;
+  const t=e.target;if(t&&(t.tagName==="BUTTON"||t.tagName==="INPUT"))return;
+  if(e.key==="ArrowRight"){e.preventDefault();markKnown();}
+  else if(e.key==="ArrowLeft"){e.preventDefault();markAgain();}
+  else if((e.key===" "||e.key==="Enter")&&(t===document.body||t===$main||(t&&t.id==="card"))){e.preventDefault();toggleFlip();}
+});
+
+rebuild();render();
+})();
+</script>
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("./sw.js").catch(()=>{});});}</script>
+</body>
+</html>
