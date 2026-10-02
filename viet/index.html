@@ -4,15 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>베트남어 첫걸음</title>
-<link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#EEF2EA">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="베트남어 첫걸음">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<style>@font-face{font-family:"Be Vietnam Pro";src:url("fonts/BeVietnamPro-Regular.ttf") format("truetype");font-weight:400;font-display:swap}@font-face{font-family:"Be Vietnam Pro";src:url("fonts/BeVietnamPro-SemiBold.ttf") format("truetype");font-weight:600;font-display:swap}@font-face{font-family:"Be Vietnam Pro";src:url("fonts/BeVietnamPro-Bold.ttf") format("truetype");font-weight:700;font-display:swap}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&family=IBM+Plex+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   box-sizing:border-box;
@@ -495,10 +489,10 @@ const SCAT=[["greet","인사·기본"],["eat","식당"],["shop","쇼핑"],["move
 /* 여행 준비 제휴 링크: [키, 아이콘, 제목, 설명, 링크]. 링크가 빈 항목은 숨김, 전부 비면 분류 자체가 안 보임
    앱에서는 C#(AdConfig.AffiliateLinks)이 채워 줌 */
 const AFF_ALL=[
- ["hotel","🏨","숙소 예약","다낭·나트랑·호찌민 호텔 비교",""],
- ["tour","🎟️","투어·입장권","바나힐, 호이안, 하롱베이 투어",""],
- ["sim","📶","유심·eSIM","도착하자마자 데이터 사용",""],
- ["transport","🚐","교통·공항 이동","공항 픽업, 기차·버스 티켓",""]
+ ["hotel","🏨","숙소 예약","다낭·나트랑·호찌민 호텔 비교","https://affiliate.klook.com/redirect?aid=137455&aff_adid=1472891&k_site=https%3A%2F%2Fwww.klook.com%2Fko%2Fsearch%2Fresult%2F%3Fquery%3D%25EB%258B%25A4%25EB%2582%2598%25ED%2598%25B8%25ED%2585%2594%26search_scope%3Dmain_search"],
+ ["tour","🎟️","투어·입장권","바나힐, 호이안, 하롱베이 투어","https://affiliate.klook.com/redirect?aid=137455&aff_adid=1472903&k_site=https%3A%2F%2Fwww.klook.com%2Fko%2Fsearch%2Fresult%2F%3Fquery%3D%25EB%258B%25A4%25EB%2582%25AD%2520%25ED%2588%25AC%25EC%2596%25B4%26search_scope%3Dmain_search"],
+ ["sim","📶","유심·eSIM","도착하자마자 데이터 사용","https://affiliate.klook.com/redirect?aid=137455&aff_adid=1472904&k_site=https%3A%2F%2Fwww.klook.com%2Fko%2Fsearch%2Fresult%2F%3Fquery%3D%25EB%25B2%25A0%25ED%258A%25B8%25EB%2582%25A8%2520%25EC%259C%25A0%25EC%258B%25AC%26search_scope%3Dmain_search"],
+ ["transport","🚐","교통·공항 이동","공항 픽업, 기차·버스 티켓","https://affiliate.klook.com/redirect?aid=137455&aff_adid=1472898&k_site=https%3A%2F%2Fwww.klook.com%2Fko%2Fsearch%2Fresult%2F%3Fquery%3D%25EB%258B%25A4%25EB%2582%25AD%2520%25EA%25B5%2590%25ED%2586%25B5%26search_scope%3Dmain_search"]
 ];
 const affList=()=>AFF_ALL.filter(a=>a[4]);
 window.__setAffiliateLinks=o=>{AFF_ALL.forEach(a=>{if(o&&typeof o[a[0]]==="string")a[4]=o[a[0]];});if(typeof tab!=="undefined"&&tab==="phr")render();};
@@ -1246,6 +1240,5 @@ try{if(document.fonts&&document.fonts.ready)document.fonts.ready.then(guides);}c
 let rt=0;window.addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(guides,120);});
 })();
 </script>
-<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("./sw.js").catch(()=>{});});}</script>
 </body>
 </html>
