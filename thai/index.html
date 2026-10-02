@@ -82,6 +82,13 @@ main{flex:1;min-height:0;overflow-y:auto;padding:4px 20px 96px}
 @keyframes enter{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
 .inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.3,.7,.2,1)}
 .inner.on{transform:rotateY(180deg)}
+/* WebKit(iOS)에서 backface-visibility가 자식 요소에 안 먹는 문제 대비: 회전 중간에 면 전환 */
+.front{visibility:visible;transition:visibility 0s .25s}
+.inner.on .front{visibility:hidden}
+.back{visibility:hidden;transition:visibility 0s .25s}
+.inner.on .back{visibility:visible}
+.front{-webkit-transform:rotateY(0deg);transform:rotateY(0deg)}
+
 .face{position:absolute;inset:0;-webkit-backface-visibility:hidden;backface-visibility:hidden;background:var(--surface);border:1.5px solid var(--line);border-radius:28px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;overflow:hidden}
 .back{transform:rotateY(180deg)}
 .tag{position:absolute;top:18px;left:18px;z-index:2;font-size:.78rem;font-weight:600;padding:3px 10px;border-radius:999px;color:var(--surface)}
@@ -300,6 +307,13 @@ nav.tabs button[aria-current="page"]{color:var(--ink)}
 .opts.five{grid-template-columns:repeat(5,1fr);gap:6px}
 .opts.five .opt{min-height:72px;padding:8px 2px;font-size:.8rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.aff{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:14px;margin-bottom:10px;cursor:pointer;color:var(--ink);font:inherit}
+.aff-i{font-size:1.6rem;line-height:1}
+.aff-t{flex:1;display:flex;flex-direction:column;min-width:0}
+.aff-t b{font-size:1rem}
+.aff-t span{font-size:.84rem;color:var(--muted)}
+.aff-go{font-size:1.5rem;color:var(--muted)}
+.aff-note{font-size:.8rem;color:var(--muted);margin:2px 0 12px}
 </style>
 </head>
 <body>
@@ -477,6 +491,24 @@ const W_RAW=[
 
 /* ========== 회화: [분류, 한국어, 태국어, 한글 발음, 영어, 질문이면 1]  {p}=공손한 끝맺음, {I}=저 ========== */
 const SCAT=[["greet","인사·기본"],["eat","식당"],["shop","쇼핑"],["move","교통·길"],["stay","숙소"],["help","긴급"]];
+/* 여행 준비 제휴 링크: [키, 아이콘, 제목, 설명, 링크]. 링크가 빈 항목은 숨김, 전부 비면 분류 자체가 안 보임
+   앱에서는 C#(AdConfig.AffiliateLinks)이 채워 줌 */
+const AFF_ALL=[
+ ["hotel","🏨","숙소 예약","방콕·파타야·푸껫 호텔 비교",""],
+ ["tour","🎟️","투어·입장권","수상시장, 아유타야, 공연 티켓",""],
+ ["sim","📶","유심·eSIM","도착하자마자 데이터 사용",""],
+ ["transport","🚐","공항 픽업","공항에서 숙소까지 편하게",""]
+];
+const affList=()=>AFF_ALL.filter(a=>a[4]);
+window.__setAffiliateLinks=o=>{AFF_ALL.forEach(a=>{if(o&&typeof o[a[0]]==="string")a[4]=o[a[0]];});if(typeof tab!=="undefined"&&tab==="phr")render();};
+function openExternal(url){
+  if(!/^https?:\/\//i.test(url))return;
+  if(window.__openExternal)return window.__openExternal(url); // 앱: 기기 브라우저로 열기
+  try{window.open(url,"_blank","noopener");}catch(e){location.href=url;}
+}
+function tripHTML(){
+  return `<p class="aff-note">제휴 링크예요. 이 링크로 예약하면 개발자가 소정의 수수료를 받을 수 있어요.</p>`+affList().map(a=>`<button class="aff" data-aff="${a[0]}"><span class="aff-i" aria-hidden="true">${a[1]}</span><span class="aff-t"><b>${a[2]}</b><span>${a[3]}</span></span><span class="aff-go" aria-hidden="true">›</span></button>`).join("");
+}
 const S_RAW=[
 ["greet","안녕하세요","สวัสดี{p}","싸왓디 {p}","Hello."],
 ["greet","감사합니다","ขอบคุณ{p}","컵쿤 {p}","Thank you."],
@@ -886,13 +918,14 @@ function phrCard(x){
 }
 function sentListHTML(){
   const q=norm(sq);
+  if(!q&&scat==="trip")return affList().length?tripHTML():"";
   const items=q?SENTS.filter(x=>hay(x).includes(q)):scat==="fav"?SENTS.filter(x=>S.fav.includes(x.key)):SENTS.filter(x=>x.cat===scat);
   if(!items.length)return `<p class="none">${q?`‘${esc(sq.trim())}’에 맞는 문장이 없어요.`:"저장한 문장이 없어요. 별을 눌러 자주 쓸 문장을 모아 두세요."}</p>`;
   return items.map(phrCard).join("");
 }
 function renderPhr(){
   const m=S.gender!=="f";
-  $v.innerHTML=searchHTML(sq,"문장 찾기")+catChips(SCAT,scat,"sc",!!norm(sq))+
+  $v.innerHTML=searchHTML(sq,"문장 찾기")+catChips(affList().length?[...SCAT,["trip","✈️ 여행 준비"]]:SCAT,scat,"sc",!!norm(sq))+
     `<div class="gender"><div class="switch" role="group" aria-label="말투"><button data-g="m" aria-pressed="${m}">남성 말투</button><button data-g="f" aria-pressed="${!m}">여성 말투</button></div><span class="g-note">${m?"문장 끝에 크랍(ครับ)을 붙여요":"문장 끝에 카(ค่ะ)를 붙여요"}</span></div>
     <div id="plist">${sentListHTML()}</div>`;
   bindSearch(v=>{sq=v;},"sc",()=>scat,()=>sq);
@@ -1209,6 +1242,7 @@ document.addEventListener("keydown",e=>{
   else if((e.key===" "||e.key==="Enter")&&(t===document.body||t===$main||(t&&t.id==="card"))){e.preventDefault();toggleFlip();}
 });
 
+$v.addEventListener("click",e=>{const b=e.target.closest("[data-aff]");if(!b)return;const a=AFF_ALL.find(x=>x[0]===b.dataset.aff);if(a&&a[4])openExternal(a[4]);});
 rebuild();render();
 try{if(document.fonts&&document.fonts.ready)document.fonts.ready.then(guides);}catch(e){}
 let rt=0;window.addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(guides,120);});

@@ -93,6 +93,13 @@ main{flex:1;min-height:0;overflow-y:auto;padding:4px 20px 96px}
 @keyframes enter{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
 .inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.3,.7,.2,1)}
 .inner.on{transform:rotateY(180deg)}
+/* WebKit(iOS)에서 backface-visibility가 자식 요소에 안 먹는 문제 대비: 회전 중간에 면 전환 */
+.front{visibility:visible;transition:visibility 0s .25s}
+.inner.on .front{visibility:hidden}
+.back{visibility:hidden;transition:visibility 0s .25s}
+.inner.on .back{visibility:visible}
+.front{-webkit-transform:rotateY(0deg);transform:rotateY(0deg)}
+
 .face{position:absolute;inset:0;-webkit-backface-visibility:hidden;backface-visibility:hidden;background:var(--surface);border:1.5px solid var(--line);border-radius:28px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px;overflow:hidden}
 .back{transform:rotateY(180deg);justify-content:flex-start;padding-top:52px;overflow-y:auto}
 .tag{position:absolute;top:18px;left:18px;z-index:2;font-size:.76rem;font-weight:600;padding:3px 10px;border-radius:999px;color:var(--surface)}
@@ -233,6 +240,13 @@ nav.tabs button[aria-current="page"]{color:var(--ink)}
 .three th{background:var(--bg);font-weight:600}
 .three .ko{font-size:1.1rem;font-weight:600}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.aff{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:14px;margin-bottom:10px;cursor:pointer;color:var(--ink);font:inherit}
+.aff-i{font-size:1.6rem;line-height:1}
+.aff-t{flex:1;display:flex;flex-direction:column;min-width:0}
+.aff-t b{font-size:1rem}
+.aff-t span{font-size:.84rem;color:var(--muted)}
+.aff-go{font-size:1.5rem;color:var(--muted)}
+.aff-note{font-size:.8rem;color:var(--muted);margin:2px 0 12px}
 </style>
 </head>
 <body>
@@ -370,6 +384,24 @@ const W_RAW=[
 ];
 /* ===== 회화: [분류, 태국어 뜻, 한국어, 태국어 읽기, 영어] ===== */
 const SCAT=[["greet","ทักทาย"],["eat","ร้านอาหาร"],["shop","ช้อปปิ้ง"],["move","เดินทาง"],["stay","ที่พัก"],["help","ฉุกเฉิน"]];
+/* 여행 준비 제휴 링크: [키, 아이콘, 제목, 설명, 링크]. 링크가 빈 항목은 숨김, 전부 비면 분류 자체가 안 보임
+   앱에서는 C#(AdConfig.AffiliateLinks)이 채워 줌 */
+const AFF_ALL=[
+ ["hotel","🏨","จองที่พัก","โรงแรมในโซล ปูซาน เชจู",""],
+ ["tour","🎟️","ทัวร์และบัตรเข้าชม","สวนสนุก พระราชวัง ทัวร์ DMZ",""],
+ ["sim","📶","ซิม / eSIM เกาหลี","ใช้เน็ตได้ทันทีที่ถึงสนามบิน",""],
+ ["transport","🚇","บัตร T-money และรถไฟสนามบิน","เดินทางในเมืองสะดวก",""]
+];
+const affList=()=>AFF_ALL.filter(a=>a[4]);
+window.__setAffiliateLinks=o=>{AFF_ALL.forEach(a=>{if(o&&typeof o[a[0]]==="string")a[4]=o[a[0]];});if(typeof tab!=="undefined"&&tab==="phr")render();};
+function openExternal(url){
+  if(!/^https?:\/\//i.test(url))return;
+  if(window.__openExternal)return window.__openExternal(url); // 앱: 기기 브라우저로 열기
+  try{window.open(url,"_blank","noopener");}catch(e){location.href=url;}
+}
+function tripHTML(){
+  return `<p class="aff-note">ลิงก์พันธมิตร หากจองผ่านลิงก์นี้ ผู้พัฒนาอาจได้รับค่าคอมมิชชั่นเล็กน้อย</p>`+affList().map(a=>`<button class="aff" data-aff="${a[0]}"><span class="aff-i" aria-hidden="true">${a[1]}</span><span class="aff-t"><b>${a[2]}</b><span>${a[3]}</span></span><span class="aff-go" aria-hidden="true">›</span></button>`).join("");
+}
 const S_RAW=[
 ["greet","สวัสดี","안녕하세요","อันยองฮาเซโย","Hello."],
 ["greet","ขอบคุณ","감사합니다","คัมซาฮัมนีดา","Thank you."],
@@ -700,12 +732,13 @@ function phrCard(x){
 }
 function sentListHTML(){
   const q=norm(sq);
+  if(!q&&scat==="trip")return affList().length?tripHTML():"";
   const items=q?SENTS.filter(x=>hay(x).includes(q)):scat==="fav"?SENTS.filter(x=>S.fav.includes(x.key)):SENTS.filter(x=>x.cat===scat);
   if(!items.length)return `<p class="none">${q?`ไม่พบประโยค “${esc(sq.trim())}”`:"ยังไม่มีประโยคที่บันทึกไว้ กดดาวเพื่อเก็บประโยคที่ใช้บ่อย"}</p>`;
   return items.map(phrCard).join("");
 }
 function renderPhr(){
-  $v.innerHTML=searchHTML(sq,"ค้นหาประโยค")+catChips(SCAT,scat,"sc",!!norm(sq))+`<div id="plist">${sentListHTML()}</div>`;
+  $v.innerHTML=searchHTML(sq,"ค้นหาประโยค")+catChips(affList().length?[...SCAT,["trip","✈️ เตรียมเที่ยว"]]:SCAT,scat,"sc",!!norm(sq))+`<div id="plist">${sentListHTML()}</div>`;
   bindSearch(v=>{sq=v;},"sc",()=>scat,()=>sq);
 }
 // 검색창은 그대로 두고 목록만 다시 그려서 입력 중 포커스 유지
@@ -923,6 +956,7 @@ document.addEventListener("keydown",e=>{
   else if((e.key===" "||e.key==="Enter")&&(t===document.body||t===$main||(t&&t.id==="card"))){e.preventDefault();toggleFlip();}
 });
 
+$v.addEventListener("click",e=>{const b=e.target.closest("[data-aff]");if(!b)return;const a=AFF_ALL.find(x=>x[0]===b.dataset.aff);if(a&&a[4])openExternal(a[4]);});
 rebuild();render();
 })();
 </script>
