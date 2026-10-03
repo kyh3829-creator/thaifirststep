@@ -369,9 +369,9 @@ window.addEventListener("load",function(){setTimeout(function(){var v=document.g
 const RAW=[
 ["ก","꺼 까이","닭","mid","ㄲ (k)","กอ ไก่","🐔"],
 ["ข","커 카이","달걀","high","ㅋ (kh)","ขอ ไข่","🥚"],
-["ฃ","커 쿠앗","병","high","ㅋ (kh)","ฃอ ขวด","🍾","지금은 쓰지 않는 글자"],
+["ฃ","커 쿠앗","병","high","ㅋ (kh)","ฃอ ขวด","🍾","지금은 쓰지 않는 글자예요. 퀴즈에는 나오지 않아요"],
 ["ค","커 콰이","물소","low","ㅋ (kh)","คอ ควาย","🐃"],
-["ฅ","커 콘","사람","low","ㅋ (kh)","ฅอ คน","🧑","지금은 쓰지 않는 글자"],
+["ฅ","커 콘","사람","low","ㅋ (kh)","ฅอ คน","🧑","지금은 쓰지 않는 글자예요. 퀴즈에는 나오지 않아요"],
 ["ฆ","커 라캉","종","low","ㅋ (kh)","ฆอ ระฆัง","🔔"],
 ["ง","응어 응우","뱀","low","ㅇ (ng)","งอ งู","🐍"],
 ["จ","쩌 짠","접시","mid","ㅉ (ch)","จอ จาน","🍽️"],
@@ -418,7 +418,7 @@ const ROM=["ko kai","kho khai","kho khuat","kho khwai","kho khon","kho rakhang",
 // 받침(끝소리): 6개 그룹 + 반모음 2개. 없는 글자는 받침으로 쓰지 않음
 const FIN=(()=>{const g={"ㄱ (k)":"กขคฆ","ㅅ (t)":"จชซฎฏฐฑฒดตถทธศษส","ㅂ (p)":"บปพฟภ","ㄴ (n)":"ญณนรลฬ","ㅁ (m)":"ม","ㅇ (ng)":"ง","우 (w)":"ว","이 (y)":"ย"};
   const m={};for(const k in g)for(const c of g[k])m[c]=k;return m;})();
-const DATA=RAW.map((r,i)=>({id:i,key:"c"+i,ch:r[0],name:r[1],mean:r[2],cls:r[3],snd:r[4],fin:FIN[r[0]]||"안 씀",th:r[5],emo:r[6],note:r[7]||"",
+const DATA=RAW.map((r,i)=>({id:i,key:"c"+i,ch:r[0],name:r[1],mean:r[2],cls:r[3],snd:r[4],fin:FIN[r[0]]||"안 씀",old:r[0]==="ฃ"||r[0]==="ฅ",th:r[5],emo:r[6],note:r[7]||"",
   en:EN[i],rom:ROM[i],thw:r[5].split(" ").slice(1).join(" ")}));
 const CLS={mid:"중자음",high:"고자음",low:"저자음"};
 const CLS_N={mid:9,high:11,low:24};
@@ -1070,9 +1070,9 @@ function nextQ(){
     ans=pickFrom(TW,xweight);
     opts=TK.map(k=>({key:k,ko:TONE[k].ko,th:TONE[k].th,en:TONE_EN[k]}));correct=ans.tone;
   }else{
-    const pool=baseIds().map(id=>DATA[id]);
+    const pool=baseIds().map(id=>DATA[id]).filter(d=>!d.old);
     ans=pickFrom(pool,d=>{const s=S.stats[d.id]||{ok:0,ng:0};return (known.has(d.id)?1:3)+Math.min(s.ng,3)*1.5-s.ok*.3;});
-    const pick=fill(shuffle(lookalikes(ans)).slice(0,2).map(id=>DATA[id]),ans,DATA,d=>d.ch);
+    const pick=fill(shuffle(lookalikes(ans)).map(id=>DATA[id]).filter(d=>!d.old).slice(0,2),ans,DATA.filter(d=>!d.old),d=>d.ch);
     opts=shuffle([ans,...pick]).map(d=>({key:d.key,ko:d.name,th:d.th,en:d.rom,g:d.ch}));correct=ans.key;
   }
   lastKey=ans.key;Q.asked[ans.key]=(Q.asked[ans.key]||0)+1;
