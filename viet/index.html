@@ -105,6 +105,7 @@ main{flex:1;min-height:0;overflow-y:auto;padding:4px 20px 96px}
 .facts div{display:flex;flex-direction:column;justify-content:center;background:var(--bg);border-radius:14px;padding:8px 12px;text-align:center}
 .facts span{display:block;font-size:.74rem;color:var(--muted)}
 .facts b{font-size:1rem}
+.facts .mean{grid-row:span 2}
 .facts em{font-style:normal;font-size:1.05rem;line-height:1.35}
 .facts i{font-style:normal;font-size:.78rem;color:var(--muted)}
 .rom{font-size:.88rem;color:var(--muted)}
@@ -415,7 +416,9 @@ const RAW=[
 // 자음 이름 속 단어의 영어 뜻, 이름의 로마자 표기 (RAW와 같은 순서)
 const EN=["fish", "eat", "airport", "car", "night", "go", "have, yes", "dad", "pho", "buy", "milk", "hand", "banh mi", "coffee", "coconut", "road, sugar", "chicken", "flower", "ice cream", "cold", "rain", "water", "battery", "gift", "vegetables", "river", "shrimp", "happy", "hello", "market", "chair", "price", "hotel", "delicious", "rest", "house", "room", "meat", "tea", "ghost", "but", "mother", "grave", "horse, code", "rice seedling"];
 const ROM=["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""];
-const DATA=RAW.map((r,i)=>({id:i,key:"c"+i,ch:r[0],name:r[1],mean:r[2],cls:r[3],snd:r[4],th:r[5],emo:r[6],note:r[7]||"",
+// 받침(끝소리): 끝에 올 수 있는 자음은 8개뿐. 자음 카드에만 표시
+const FIN={"c":"ㄱ (k)","ch":"ㄱ, 앞 모음이 '이'처럼 (익)","m":"ㅁ (m)","n":"ㄴ (n) · 남부 ㅇ","ng":"ㅇ (ng)","nh":"ㅇ, 앞 모음이 '이'처럼 (잉)","p":"ㅂ (p)","t":"ㅅ (t) · 남부 ㄱ"};
+const DATA=RAW.map((r,i)=>({id:i,key:"c"+i,ch:r[0],name:r[1],mean:r[2],cls:r[3],snd:r[4],fin:r[3]==="high"?(FIN[r[0]]||"받침으로 안 씀"):"",th:r[5],emo:r[6],note:r[7]||"",
   en:EN[i],rom:ROM[i],thw:r[5].split(" ").slice(1).join(" ")}));
 const CLS={mid:"모음",high:"자음",low:"성조"};
 const CLS_N={mid:12,high:27,low:6};
@@ -816,8 +819,9 @@ function renderCons(){
         <div class="thname th" lang="vi">${d.th}</div>
         <div class="rom" lang="en">${d.rom}</div>
         <div class="facts">
-          <div><span>뜻</span><b>${d.mean}</b><em class="th" lang="vi">${d.thw}</em><i lang="en">${d.en}</i></div>
+          <div class="${d.fin?"mean":""}"><span>뜻</span><b>${d.mean}</b><em class="th" lang="vi">${d.thw}</em><i lang="en">${d.en}</i></div>
           <div><span>소리</span><b>${d.snd}</b></div>
+          ${d.fin?`<div><span>받침 소리</span><b>${d.fin}</b></div>`:""}
         </div>
         ${d.note?`<div class="note">${d.note}</div>`:""}
       </div>

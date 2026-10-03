@@ -4,15 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>태국어 첫걸음</title>
-<link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#EEF2EA">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="태국어 첫걸음">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<style>@font-face{font-family:"Noto Sans Thai Looped";src:url("fonts/NotoSansThaiLooped.ttf") format("truetype");font-weight:100 900;font-display:swap}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai+Looped:wght@400;600&family=IBM+Plex+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   box-sizing:border-box;
@@ -111,6 +105,7 @@ main{flex:1;min-height:0;overflow-y:auto;padding:4px 20px 96px}
 .facts div{display:flex;flex-direction:column;justify-content:center;background:var(--bg);border-radius:14px;padding:8px 12px;text-align:center}
 .facts span{display:block;font-size:.74rem;color:var(--muted)}
 .facts b{font-size:1rem}
+.facts .mean{grid-row:span 2}
 .facts em{font-style:normal;font-size:1.05rem;line-height:1.35}
 .facts i{font-style:normal;font-size:.78rem;color:var(--muted)}
 .rom{font-size:.88rem;color:var(--muted)}
@@ -420,7 +415,10 @@ const RAW=[
 // 자음 이름 속 단어의 영어 뜻, 이름의 로마자 표기 (RAW와 같은 순서)
 const EN=["chicken","egg","bottle","buffalo","person","bell","snake","plate","cymbals","elephant","chain","tree","woman","headdress","goad (spear)","pedestal","Montho (a character)","elder","novice monk","child","turtle","sack","soldier","flag","mouse","leaf","fish","bee","lid","pedestal tray","teeth","sailboat","horse","giant","boat","monkey","ring","pavilion","hermit","tiger","chest (box)","kite","basin","owl"];
 const ROM=["ko kai","kho khai","kho khuat","kho khwai","kho khon","kho rakhang","ngo ngu","cho chan","cho ching","cho chang","so so","cho choe","yo ying","do chada","to patak","tho than","tho montho","tho phu-thao","no nen","do dek","to tao","tho thung","tho thahan","tho thong","no nu","bo baimai","po pla","pho phueng","fo fa","pho phan","fo fan","pho samphao","mo ma","yo yak","ro ruea","lo ling","wo waen","so sala","so ruesi","so suea","ho hip","lo chula","o ang","ho nokhuk"];
-const DATA=RAW.map((r,i)=>({id:i,key:"c"+i,ch:r[0],name:r[1],mean:r[2],cls:r[3],snd:r[4],th:r[5],emo:r[6],note:r[7]||"",
+// 받침(끝소리): 6개 그룹 + 반모음 2개. 없는 글자는 받침으로 쓰지 않음
+const FIN=(()=>{const g={"ㄱ (k)":"กขคฆ","ㅅ (t)":"จชซฎฏฐฑฒดตถทธศษส","ㅂ (p)":"บปพฟภ","ㄴ (n)":"ญณนรลฬ","ㅁ (m)":"ม","ㅇ (ng)":"ง","우 (w)":"ว","이 (y)":"ย"};
+  const m={};for(const k in g)for(const c of g[k])m[c]=k;return m;})();
+const DATA=RAW.map((r,i)=>({id:i,key:"c"+i,ch:r[0],name:r[1],mean:r[2],cls:r[3],snd:r[4],fin:FIN[r[0]]||"안 씀",th:r[5],emo:r[6],note:r[7]||"",
   en:EN[i],rom:ROM[i],thw:r[5].split(" ").slice(1).join(" ")}));
 const CLS={mid:"중자음",high:"고자음",low:"저자음"};
 const CLS_N={mid:9,high:11,low:24};
@@ -824,8 +822,9 @@ function renderCons(){
         <div class="thname th" lang="th">${d.th}</div>
         <div class="rom" lang="en">${d.rom}</div>
         <div class="facts">
-          <div><span>뜻</span><b>${d.mean}</b><em class="th" lang="th">${d.thw}</em><i lang="en">${d.en}</i></div>
+          <div class="mean"><span>뜻</span><b>${d.mean}</b><em class="th" lang="th">${d.thw}</em><i lang="en">${d.en}</i></div>
           <div><span>초성 소리</span><b>${d.snd}</b></div>
+          <div><span>받침 소리</span><b>${d.fin}</b></div>
         </div>
         ${d.note?`<div class="note">${d.note}</div>`:""}
       </div>
@@ -1248,6 +1247,5 @@ try{if(document.fonts&&document.fonts.ready)document.fonts.ready.then(guides);}c
 let rt=0;window.addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(guides,120);});
 })();
 </script>
-<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("./sw.js").catch(()=>{});});}</script>
 </body>
 </html>
